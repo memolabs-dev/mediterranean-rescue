@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rescue.memolabs.dev/sitemap.xml

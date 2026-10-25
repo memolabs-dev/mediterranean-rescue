@@ -1,0 +1,28 @@
+# Mediterranean Rescue
+
+https://rescue.memolabs.dev
+
+Rescue operations at sea, documented with their source. Mediterranean Rescue brings the public records of SOS MEDITERRANEE together on one map: the spreadsheet behind the association's own map, and the operations its crew keeps writing in the public logbook after that spreadsheet stopped (February 2024). Volunteers check each logbook operation against its sentence before it is published.
+
+## Public pages
+- / — Public site: map, feed and month-by-month view of published operations, each with its source and evidence. English and French.
+- /about — About the project, its data sources and its figures.
+- /invite — Single-use invitation links for volunteers.
+
+## Team space (requires sign-in)
+- /workspace — Team home
+- /workspace/data — Latest data preview and team feed
+- /workspace/review — Verify operations against logbook sentences
+- /workspace/imports — Staged imports from Google Sheets
+- /workspace/ports — Match port names
+- /workspace/publish — Send verified rows to SOS MEDITERRANEE
+- /workspace/history — Decision history
+- /workspace/team — Team members and roles
+- /workspace/practice — Practise on invented operations
+- /workspace/help — Help
+
+## Stack
+Django 5.2 LTS, Django REST Framework and drf-spectacular (OpenAPI contract) on PostgreSQL 17 with PostGIS. React 19 with the React Compiler, Base UI, MapLibre and TanStack Query.
+
+## Demo
+https://rescue.memolabs.dev

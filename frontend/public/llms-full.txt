@@ -1,0 +1,34 @@
+# Mediterranean Rescue — full documentation for AI assistants
+
+https://rescue.memolabs.dev
+
+Rescue operations at sea, documented with their source. Mediterranean Rescue brings the public records of SOS MEDITERRANEE together on one map: the spreadsheet behind the association's own map, and the operations its crew keeps writing in the public logbook after that spreadsheet stopped (February 2024). Volunteers check each logbook operation against its sentence before it is published, and can hand the checked rows back in the spreadsheet's own columns. Two rows stay out: medical evacuations or rows without a number of people, which the SOS sheet does not hold.
+
+## Public site
+Home page (`/`) shows a map, a feed and a month-by-month view of the published operations, each with its source and evidence. English and French. About page (`/about`) describes the project, its data sources and its figures (how far the SOS sheet lags, what was rebuilt, what is verified).
+
+## Team space (`/workspace`)
+A workstation for volunteers. Every decision is recorded with its author, date and reason.
+- `/workspace` — Team home
+- `/workspace/data` — Latest data preview and team feed (Explore audience=team). Logbook card shows how far the sheet lags (2 people to reconcile as of Oct 2026), sync status, figures check per year.
+- `/workspace/review` — Verify each operation against its logbook sentence. 69 operations waiting (as of Oct 2026), 35 carry a note on what to look at.
+- `/workspace/imports` — Staged imports from Google Sheets tabs, read every five minutes.
+- `/workspace/ports` — Match port names.
+- `/workspace/publish` — Send verified operations to SOS MEDITERRANEE in the sheet's own columns.
+- `/workspace/history` — Who decided what and why.
+- `/workspace/team` — Team members and roles (groups: Verify events, Prepare events).
+- `/workspace/practice` — Practise on invented operations (fictitious data).
+- `/workspace/help` — Help.
+- `/invite` — Single-use invitation links for volunteers.
+
+## Data rules
+- Unknown stays null, never zero. No identity, position or count is invented.
+- Imports create staging or drafts, never publications.
+- Never commit real source data. Real exports live only under data/local/ (ignored by Git).
+
+## Stack
+Backend: Django 5.2 LTS, Django REST Framework, drf-spectacular (OpenAPI contract in contracts/openapi.yaml), PostgreSQL 17 with PostGIS. Two scheduled readers: Google Sheets tabs every 5 minutes, public logbook every 6 hours.
+Frontend: React 19 with the React Compiler, Base UI, MapLibre, TanStack Query. One production image serves the API and the built frontend.
+
+## Repository
+Public at memolabs-dev/mediterranean-rescue. Demo at https://rescue.memolabs.dev.
