@@ -232,7 +232,7 @@ export const en = {
   "account.claim": "Each operation at sea, checked one by one against its source.",
   "account.note": "A volunteer space, independent of SOS MEDITERRANEE. Nothing here is public until someone decides it.",
   "account.back": "Back to the public site",
-  "signIn.invited": "New to the team? Ask your coordinator for an invitation link: it signs you in without a password.",
+  "signIn.invited": "Joining for the first time, or returning without a password? Ask your coordinator for a new invitation link. Each link works once; your old link cannot sign you in again.",
   "signIn.title": "Sign in",
   "signIn.localLead": "This is a local machine: it can sign the team in without a password. You signed out, so it no longer does it in this browser.",
   "signIn.localResume": "Sign in automatically again",

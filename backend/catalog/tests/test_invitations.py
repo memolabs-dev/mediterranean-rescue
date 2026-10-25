@@ -115,6 +115,39 @@ class AcceptTests(InvitationTestCase):
         self.assertEqual(reused.status_code, 409)
         self.assertEqual(reused.json()["code"], "invitation_unusable")
 
+    def test_a_second_invitation_restores_an_existing_volunteers_session(self):
+        first = self.invite(email="return@example.org")
+        visitor, token = self.visitor()
+        accepted = self.post("invitations/accept/", {"token": first}, visitor, token)
+        self.assertEqual(accepted.status_code, 200)
+        user = User.objects.get(email="return@example.org")
+        self.assertFalse(user.has_usable_password())
+        csrf = visitor.get("/api/csrf/").json()["csrfToken"]
+        self.assertEqual(
+            visitor.delete("/api/private/v1/session/", HTTP_X_CSRFTOKEN=csrf).status_code, 204
+        )
+        self.assertEqual(visitor.get("/api/private/v1/me/").status_code, 401)
+
+        # An authorized staff coordinator can issue a new, independent single-use link.
+        second = self.invite(email="RETURN@example.org")
+        self.assertNotEqual(first, second)
+        old, old_csrf = self.visitor()
+        self.assertEqual(
+            self.post("invitations/accept/", {"token": first}, old, old_csrf).status_code,
+            409,
+        )
+        again, fresh_csrf = self.visitor()
+        self.assertEqual(
+            self.post("invitations/accept/", {"token": second}, again, fresh_csrf).status_code,
+            200,
+        )
+        self.assertEqual(again.get("/api/private/v1/me/").json()["username"], user.username)
+        self.assertEqual(User.objects.filter(email__iexact="return@example.org").count(), 1)
+        self.assertEqual(
+            self.post("invitations/accept/", {"token": second}, old, old_csrf).status_code,
+            409,
+        )
+
     def test_an_existing_volunteer_is_signed_in_and_keeps_their_account(self):
         volunteer = User.objects.create_user(username="ana", email="ana@example.org", password=None)
         token = self.invite(email="ANA@example.org", roles=[])

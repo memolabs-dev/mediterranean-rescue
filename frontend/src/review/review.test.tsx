@@ -90,6 +90,7 @@ describe("access", () => {
     });
     renderAt("/workspace/review");
     await screen.findByRole("heading", { name: "Sign in" });
+    expect(screen.getByText(/returning without a password.*new invitation link/i)).toBeTruthy();
     await userEvent.type(screen.getByRole("textbox", { name: "Username" }), "reviewer");
     await userEvent.type(screen.getByLabelText("Password"), "wrong");
     await userEvent.click(screen.getByRole("button", { name: "Sign in" }));
