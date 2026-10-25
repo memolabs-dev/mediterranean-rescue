@@ -163,8 +163,8 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
           origin: row.evidence
             ? fromNewsSite(row.evidence)
               ? t("explore.origin.news")
-              : t("explore.origin.logbook", { rotation: missionName(i18n, row.evidence.rotation) })
-            : t("explore.origin.update", { date: i18n.date(row.exported_at.slice(0, 10)) }),
+              : t("explore.origin.logbook", { rotation: missionName(i18n, row.evidence.rotation ?? "") })
+            : t("explore.origin.update", { date: i18n.date(row.exported_at ? row.exported_at.slice(0, 10) : "") }),
         })),
       )
     : (publicFeed.data?.pages ?? []).flatMap((p) =>

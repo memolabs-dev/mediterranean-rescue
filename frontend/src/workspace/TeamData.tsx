@@ -219,7 +219,15 @@ export function TeamData() {
           <LogbookCard />
           <SyncStatus />
           <div id="team-explore">
-            <Explore audience="team" />
+            <ErrorBoundary fallback={(error, info) => (
+              <div style={{ padding: 24, color: "#b00" }}>
+                <h2>Explore render error</h2>
+                <pre>{error.message}</pre>
+                <pre>{info.componentStack}</pre>
+              </div>
+            )}>
+              <Explore audience="team" />
+            </ErrorBoundary>
           </div>
         </>
       )}
