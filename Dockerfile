@@ -11,7 +11,7 @@ COPY frontend ./
 COPY contracts /src/contracts
 RUN pnpm build
 
-FROM python:3.12-slim-bookworm
+FROM python:3.15-slim-bookworm
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 UV_LINK_MODE=copy \
     DJANGO_ENV=production FRONTEND_DIST=/app/frontend
 RUN apt-get update && apt-get install -y --no-install-recommends libgdal32 libgeos-c1v5 && rm -rf /var/lib/apt/lists/*
