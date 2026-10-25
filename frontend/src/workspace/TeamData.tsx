@@ -4,6 +4,7 @@ import { Explore } from "../explore/Explore";
 import { useI18n, type I18n } from "../i18n/I18nProvider";
 import { Link } from "../router";
 import { Icon } from "../ui/Icon";
+import { assessFigures } from "./figuresComparison";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { WorkspaceShell } from "./WorkspaceShell";
 
@@ -80,12 +81,8 @@ type Overview = components["schemas"]["LogbookOverview"];
 function FiguresCheck({ data }: { data: Overview }) {
   const i18n = useI18n();
   const { t } = i18n;
-  const yearGaps = data.years.map((year) => (year.reported === null ? 0 : year.reported - year.in_sheet - year.from_logbook));
-  const total = data.cumulative ? data.cumulative.in_sheet + data.cumulative.from_logbook : 0;
-  const totalGap = data.cumulative ? data.cumulative.reported - total : 0;
-  // The title names the largest difference, so a matching total never hides a year that differs.
-  const gap = Math.max(Math.abs(totalGap), ...yearGaps.map(Math.abs));
-  const matches = gap === 0;
+  const { yearGaps, total, totalGap, gap, status, hasUnknown } = assessFigures(data);
+  const matches = status === "match";
   const sameOrGap = (reported: number, difference: number, same: Key, differs: Key, surplus: Key) =>
     t(difference === 0 ? same : difference > 0 ? differs : surplus, {
       reported: i18n.number(reported),
@@ -95,7 +92,7 @@ function FiguresCheck({ data }: { data: Overview }) {
     <div className={`logbook-card__check${matches ? "" : " logbook-card__check--gap"}`}>
       <p className="logbook-card__check-title">
         <Icon name={matches ? "check" : "alert"} size={16} />{" "}
-        {matches ? t("logbook.card.checkMatches") : t("logbook.card.checkGapTitle", { count: gap })}
+        {matches ? t("logbook.card.checkMatches") : status === "incomplete" ? t("logbook.card.checkIncomplete") : t("logbook.card.checkGapTitle", { count: gap })}
       </p>
       <ul>
         {data.years.map((year, index) => (
@@ -121,14 +118,17 @@ function FiguresCheck({ data }: { data: Overview }) {
               logbook: i18n.number(data.cumulative.from_logbook),
             })}
             {" · "}
-            {sameOrGap(data.cumulative.reported, totalGap, "logbook.card.checkTotalSame", "logbook.card.checkTotalGap", "logbook.card.checkTotalSurplus")}
+            {sameOrGap(data.cumulative.reported, totalGap!, "logbook.card.checkTotalSame", "logbook.card.checkTotalGap", "logbook.card.checkTotalSurplus")}
           </li>
         )}
       </ul>
-      {!matches && (
+      {status === "gap" && (
         <p className="logbook-card__check-note">
           {data.cumulative && data.cumulative.in_sheet === 0 ? t("logbook.card.checkNoSheet") : t("logbook.card.checkGapNote")}
         </p>
+      )}
+      {(hasUnknown || status === "incomplete") && (
+        <p className="logbook-card__check-note">{t("logbook.card.checkIncompleteNote")}</p>
       )}
       {data.cumulative && data.cumulative.after > 0 && (
         <p className="logbook-card__check-note">
@@ -220,11 +220,9 @@ export function TeamData() {
           <LogbookCard />
           <SyncStatus />
           <div id="team-explore">
-            <ErrorBoundary fallback={(error, info) => (
-              <div style={{ padding: 24, color: "#b00" }}>
-                <h2>Explore render error</h2>
-                <pre>{error.message}</pre>
-                <pre>{info.componentStack}</pre>
+            <ErrorBoundary fallback={() => (
+              <div className="review-note" role="alert">
+                <p>{t("ui.crash")}</p>
               </div>
             )}>
               <Explore audience="team" />

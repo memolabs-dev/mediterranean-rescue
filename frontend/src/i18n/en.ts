@@ -1003,6 +1003,8 @@ export const en = {
   "logbook.syncEvery": "read every 6 hours",
   "logbook.card.verify": { one: "Verify {count} operation", other: "Verify {count} operations" },
   "logbook.card.nothingToDownload": "Nothing to download yet: verify first",
+  "logbook.card.checkIncomplete": "Reference figures incomplete: comparison pending",
+  "logbook.card.checkIncompleteNote": "At least one published reference figure is unavailable. Do not treat these totals as fully reconciled.",
   "logbook.card.checkMatches": "Same yearly totals of people as SOS MEDITERRANEE’s reports",
   "logbook.card.checkYear": "{year}: {total} people (sheet {sheet} + logbook {logbook})",
   "logbook.card.checkSame": "same as the annual report",

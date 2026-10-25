@@ -1006,6 +1006,8 @@ export const fr: Messages = {
   "logbook.syncEvery": "relu toutes les 6 heures",
   "logbook.card.verify": { one: "Vérifier {count} opération", other: "Vérifier {count} opérations" },
   "logbook.card.nothingToDownload": "Rien à télécharger : vérifiez d’abord",
+  "logbook.card.checkIncomplete": "Chiffres de référence incomplets : comparaison en attente",
+  "logbook.card.checkIncompleteNote": "Au moins un chiffre de référence publié est indisponible. Ces totaux ne peuvent pas être considérés comme entièrement rapprochés.",
   "logbook.card.checkMatches": "Mêmes totaux de personnes que les rapports de SOS MEDITERRANEE",
   "logbook.card.checkYear": "{year} : {total} personnes (tableur {sheet} + journal {logbook})",
   "logbook.card.checkSame": "comme le rapport annuel",
