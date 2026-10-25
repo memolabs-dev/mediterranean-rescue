@@ -7,6 +7,21 @@ function place(longitude: number, latitude: number) {
   return { x: (longitude - west) * MED_SCALE, y: north - latitude };
 }
 
+// A single shared definition saves repeating the same ~10 KB path on each event card.
+// Keep the definition inside Explore, which owns all MiniMap instances, so SVG <use>
+// resolves within the same document on Safari and Chromium.
+const LAND_ID = "med-rescue-mini-land";
+
+export function MiniMapDefinitions() {
+  return (
+    <svg className="mini-map-definitions" width="0" height="0" aria-hidden="true" focusable="false">
+      <defs>
+        <path id={LAND_ID} d={MED_LAND} />
+      </defs>
+    </svg>
+  );
+}
+
 // A static locator drawn from the same coastline as the map: no WebGL, cheap enough for every card.
 export function MiniMap({
   position,
@@ -22,7 +37,7 @@ export function MiniMap({
   return (
     <span className={`mini-map-wrap${point ? "" : " mini-map-wrap--unknown"}`}>
       <svg className="mini-map" viewBox={MED_VIEWBOX} role="img" aria-label={label} preserveAspectRatio="xMidYMid slice">
-        <path className="mini-map__land" d={MED_LAND} />
+        <use className="mini-map__land" href={"#" + LAND_ID} />
         {point && (
           <>
             <circle className="mini-map__halo" cx={point.x} cy={point.y} r={1.4} />

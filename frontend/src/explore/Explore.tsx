@@ -13,7 +13,7 @@ import { fromNewsSite, missionName } from "./Evidence";
 import { kindLabel, kindName, peopleText, type Key } from "./labels";
 import { Logbook } from "./Logbook";
 import { MapPeek } from "./MapPeek";
-import { MiniMap } from "./MiniMap";
+import { MiniMap, MiniMapDefinitions } from "./MiniMap";
 import { PublicBar } from "./PublicBar";
 import { Welcome } from "./Welcome";
 import { Timeline } from "./Timeline";
@@ -286,6 +286,7 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
 
   return (
     <div className={`explore${preview ? " explore--team" : ""} explore--view-${view}`}>
+      <MiniMapDefinitions />
       {!preview && (
         <a className="skip-link" href="#explore-title">
           {t("app.skip")}
