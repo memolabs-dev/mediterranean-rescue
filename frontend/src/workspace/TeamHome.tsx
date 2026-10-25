@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { api, type Me } from "../api/client";
 import { useI18n, type I18n } from "../i18n/I18nProvider";
 import { Link } from "../router";
@@ -25,7 +25,7 @@ export function TeamHome() {
   const { t } = useI18n();
   return (
     <WorkspaceShell section="home" title={t("home.title")} className="review review--wide">
-      {(me) => <Home me={me} />}
+      {(me) => <Home key={me.username} me={me} />}
     </WorkspaceShell>
   );
 }
@@ -38,9 +38,9 @@ function Home({ me }: { me: Me }) {
   const canRead = reviewer || stager;
   const canFollow = reviewer || preparer || publisher;
   // Landing here is discovering the space: the first step of the journey.
-  const [practiced] = useState(() => journeyDone("practice"));
-  const [publishGuide] = useState(() => journeyDone("publishGuide"));
-  useEffect(() => markJourney("intro"), []);
+  const practiced = journeyDone("practice", me.username);
+  const publishGuide = journeyDone("publishGuide", me.username);
+  useEffect(() => markJourney("intro", me.username), [me.username]);
   const sync = api.useQuery("get", "/api/private/v1/sync/", {}, { refetchInterval: 60_000, enabled: canRead });
   const queue = api.useQuery("get", "/api/private/v1/preview/events/", { params: { query: { limit: 1 } } }, { enabled: reviewer });
   const publication = api.useQuery("get", "/api/private/v1/publication/", {}, { enabled: canFollow });

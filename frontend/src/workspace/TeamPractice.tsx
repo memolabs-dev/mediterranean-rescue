@@ -10,7 +10,7 @@ type Step = "look" | "act" | "done";
 
 // A first verification on an invented operation, with one mistake to spot: the volunteer learns
 // the gesture before touching real data, and nothing is sent anywhere (25 October 2026).
-function Exercise() {
+function Exercise({ username }: { username: string }) {
   const { t } = useI18n();
   const [step, setStep] = useState<Step>("look");
   const [feedback, setFeedback] = useState<"right" | "wrong" | null>(null);
@@ -18,7 +18,7 @@ function Exercise() {
   const answer = (right: boolean, next: Step) => {
     setFeedback(right ? "right" : "wrong");
     if (right) {
-      if (next === "done") markJourney("practice");
+      if (next === "done") markJourney("practice", username);
       setStep(next);
     }
   };
@@ -117,7 +117,7 @@ export function TeamPractice() {
   const { t } = useI18n();
   return (
     <WorkspaceShell section="practice" title={t("workspace.section.practice")} className="review">
-      {() => <Exercise />}
+      {(me) => <Exercise key={me.username} username={me.username} />}
     </WorkspaceShell>
   );
 }
