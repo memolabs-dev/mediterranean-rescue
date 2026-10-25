@@ -38,6 +38,24 @@ On the same Apple M4, two fresh throwaway containers per architecture were bench
 
 **Observed ratio: 12.72x** faster in this particular CPU-heavy spatial query, under these test conditions. Startup times and memory readings varied across runs; they are **not** treated as a reliable performance or RAM saving. This is not a general application speedup, nor a safety justification for a database switch. Repeat with realistic workloads, whole-application migration checks, storage I/O, concurrency, and a reviewed backup/rollback plan.
 
+## Full data and permissions rehearsal (2026-10-25)
+
+The optional `scripts/verify_arm64_full_parity.py` reads the **local `rescue-smoke-db-1` test container only**, creates a new disposable ARM64 container, then streams a PostgreSQL custom-format dump directly from the original container into `pg_restore` on the ARM64 target. It never stops the original database, publishes no ports, exposes no network, mounts no existing data volume and writes no dump file. The test container is removed in a `finally` block.
+
+```sh
+docker build --platform linux/arm64 -t rescue-pgdg-arm64:parity \
+  -f infra/Dockerfile.db.arm64-pgdg .
+python3 scripts/verify_arm64_full_parity.py
+# Optional after other local experiments finish:
+docker image rm rescue-pgdg-arm64:parity
+```
+
+The probe rejects a missing source or an already-existing target. It checks table names, per-table row counts and fingerprints (not raw values), PostGIS version, owners, grants, index definitions, sequence state, constraint/index/sequence counts and login/read access through the application role. The dump/restore preserves SQL object owners and grants; disabling ownership/ACL restoration would invalidate this check. Sensitive row contents are neither printed nor written to files.
+
+**Measured on 25 October 2026**: a full copy of the local Rescue smoke database passed the checks for **32 tables / 10,744 rows, 117 indexes, 12 sequences, 129 constraints**, PostGIS 3.6.4 and real `rescue` account access; the temporary container was removed. The test reports only aggregate counts.
+
+This is a **read-only migration rehearsal**, not a production backup, hot replication, or automatic cutover. Source data can change after the dump snapshot, so a real cutover requires pausing writers, creating a durable encrypted backup, validating it, restoring into a fresh **persistent** volume, performing real application end-to-end checks and maintaining a tested rollback.
+
 ## Do not treat this as a migration plan yet
 
 Before proposing a default-image change, run the full Django migrations against a **new** database, repeat randomized AMD64-vs-ARM64 benchmarks on representative synthetic operations with matching versions, audit the image and packages, and rehearse `pg_dump` + `pg_restore` into a fresh volume. Never mount or copy the existing PostgreSQL PGDATA directory into an unverified image; check schema, index and collation compatibility and a rollback path.
