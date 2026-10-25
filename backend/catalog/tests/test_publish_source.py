@@ -78,3 +78,16 @@ class PublishSourceTests(DraftTestCase):
                 "publish_source", "--source", LOGBOOK_SOURCE_KEY, "--actor", "reviewer",
                 "--reason", REASON, "--apply", stdout=StringIO(),
             )  # fmt: skip
+
+    def test_rows_with_the_same_content_are_left_for_the_team(self):
+        self.stage(
+            ops_csv(
+                ops_row(nb_survivor="42"),
+                ops_row(nb_survivor="042"),
+                ops_row(date="05/02/2024", nb_survivor="7"),
+            )
+        )
+        output = self.run_command("--apply")
+        self.assertIn("left for the team 2 same-content rows", output)
+        self.assertIn("published 1", output)
+        self.assertEqual(Event.objects.get().people, 7)

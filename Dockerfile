@@ -29,7 +29,8 @@ RUN DJANGO_SECRET_KEY=build-only-collectstatic-key-that-is-long-enough-for-the-c
 RUN useradd --uid 10001 --create-home rescue && chown -R rescue:rescue /app
 USER rescue
 EXPOSE 8000
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health/', timeout=4)"
+# The probe names the served host: Django refuses any Host outside DJANGO_ALLOWED_HOSTS.
+HEALTHCHECK --interval=15s --timeout=5s --start-period=90s --start-interval=2s \
+  CMD ["python", "-c", "import os, urllib.request as r; host = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost').split(',')[0]; r.urlopen(r.Request('http://127.0.0.1:8000/api/health/', headers={'Host': host}), timeout=4)"]
 ENTRYPOINT ["backend/entrypoint.sh"]
 CMD ["serve"]

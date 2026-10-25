@@ -1,3 +1,5 @@
+from collections import Counter
+
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.management.base import BaseCommand, CommandError
@@ -81,9 +83,20 @@ class Command(BaseCommand):
         summary = ", ".join(f"{count} {kind}" for kind, count in ordered)
         self.stdout.write(f"{snapshot.sheet}: {summary}")
         approve_exact_carries(snapshot=snapshot, actor=actor, reason=reason)
+        # Two rows with the same content but different unread cells are not flagged as repeats;
+        # published both would show one operation twice. They wait for a person.
+        fingerprints = dict(snapshot.rows.values_list("pk", "fingerprint"))
+        seen = Counter(value for value in fingerprints.values() if value)
+        twice = 0
         for proposal in proposals:
-            if proposal.kind == "new":
-                approve_link(row=SheetRow(pk=proposal.row_id), actor=actor, reason=reason)
+            if proposal.kind != "new":
+                continue
+            if seen[fingerprints[proposal.row_id]] > 1:
+                twice += 1
+                continue
+            approve_link(row=SheetRow(pk=proposal.row_id), actor=actor, reason=reason)
+        if twice:
+            self.stdout.write(f"{snapshot.sheet}: left for the team {twice} same-content rows")
         result = create_drafts(snapshot=snapshot, actor=actor, reason=reason)
         skipped = {}
         for plan in result.skipped:

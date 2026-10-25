@@ -50,6 +50,7 @@ from django.contrib import admin
 from django.db import connection
 from django.http import FileResponse, Http404, JsonResponse
 from django.middleware.csrf import get_token
+from django.shortcuts import redirect
 from django.urls import path, re_path
 from django.views.decorators.http import require_GET, require_safe
 from django.views.defaults import page_not_found
@@ -71,6 +72,10 @@ def health(request):
     except Exception:
         return JsonResponse({"status": "unavailable"}, status=503)
     return JsonResponse({"status": "ok"})
+
+
+def admin_login(request):
+    return redirect("/workspace")
 
 
 def not_found(request, exception=None):
@@ -96,6 +101,10 @@ def frontend(request):
 
 
 urlpatterns = [
+    # The admin has no attempt limit of its own: its sign-in form is replaced by the team
+    # sign-in, which counts attempts per address (audit of 25 October 2026). Signed in as a
+    # staff member, the admin opens as usual.
+    path("admin/login/", admin_login),
     path("admin/", admin.site.urls),
     path("api/csrf/", csrf),
     path("api/health/", health),
@@ -142,5 +151,5 @@ urlpatterns = [
         SpectacularAPIView.as_view(authentication_classes=[], permission_classes=[]),
     ),
     # Last: anything that is not the API, the admin or a static file is a page of the application.
-    re_path(r"^(?!api(?:/|$)|admin(?:/|$)|static/).*$", frontend),
+    re_path(r"^(?!api(?:/|$)|admin(?:/|$)|static/|assets/).*$", frontend),
 ]

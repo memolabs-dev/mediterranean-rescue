@@ -116,6 +116,13 @@ if FRONTEND_DIST:
     # Vite names every built asset after its content: cache them for good.
     WHITENOISE_IMMUTABLE_FILE_TEST = lambda path, url: url.startswith("/assets/")  # noqa: E731
     WHITENOISE_MIMETYPES = {".geojson": "application/geo+json"}
+
+    def WHITENOISE_ADD_HEADERS_FUNCTION(headers, path, url):  # noqa: N802
+        # The page names the hashed assets of its release: never serve a stale one.
+        if url in ("/", "/index.html"):
+            headers["Cache-Control"] = "no-cache"
+
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DATA_UPLOAD_MAX_MEMORY_SIZE = 65536
 FILE_UPLOAD_MAX_MEMORY_SIZE = 65536

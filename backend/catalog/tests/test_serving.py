@@ -24,6 +24,12 @@ class FrontendTests(SimpleTestCase):
         with override_settings(FRONTEND_DIST=self.dist.name):
             self.assertEqual(self.client.get("/api/v1/nothing/").status_code, 404)
             self.assertEqual(self.client.get("/static/nothing.js").status_code, 404)
+            # An asset of an older release is missing, not the page.
+            self.assertEqual(self.client.get("/assets/index-old.js").status_code, 404)
+
+    def test_the_admin_sign_in_is_the_team_sign_in(self):
+        response = self.client.get("/admin/login/?next=/admin/")
+        self.assertEqual((response.status_code, response["Location"]), (302, "/workspace"))
 
     def test_an_unknown_api_address_answers_json(self):
         response = self.client.get("/api/v1/nothing/")
