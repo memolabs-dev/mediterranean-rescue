@@ -1,0 +1,8 @@
+# Experimental native ARM64 PostGIS built from official PostgreSQL and PGDG packages.
+# NEVER attach an existing production or amd64 data directory to this experimental image.
+FROM postgres:17-trixie@sha256:b8faeff7712663c2773a190181e1246e37e364b887611c04658c28b44e2408fe
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends postgresql-17-postgis-3 postgresql-17-postgis-3-scripts; \
+    rm -rf /var/lib/apt/lists/*
+COPY --chmod=0644 infra/init-db.sh /docker-entrypoint-initdb.d/20-rescue.sh

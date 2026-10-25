@@ -1,0 +1,25 @@
+# Isolated, disposable ARM64 compatibility probe; never points to production data.
+name: rescue-arm64-pgdg-probe
+services:
+  db:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.db.arm64-pgdg
+    platform: linux/arm64
+    restart: "no"
+    network_mode: "none"
+    mem_limit: 512m
+    environment:
+      POSTGRES_DB: rescue
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${ARM64_PROBE_POSTGRES_PASSWORD:?Use a throwaway value}
+      DB_PASSWORD: ${ARM64_PROBE_DB_PASSWORD:?Use a throwaway value}
+    tmpfs:
+      - /var/lib/postgresql/data:rw,size=192m
+    healthcheck:
+      test: ["CMD-SHELL", 'PGPASSWORD="$$DB_PASSWORD" psql -h 127.0.0.1 -U rescue -d rescue -Atqc "SELECT 1"']
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 60s
+      start_interval: 3s

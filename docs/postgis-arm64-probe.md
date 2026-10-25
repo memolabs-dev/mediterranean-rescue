@@ -4,6 +4,10 @@ Production/default stays on `postgis/postgis:17-3.6` (amd64). **Never mount an e
 
 The opt-in Dockerfile pins the multi-arch digest of community-maintained `imresamu/postgis:17-3.6.1-trixie`. It provides PostgreSQL 17 / PostGIS 3.6.1 on ARM64, but the official current image uses PostGIS 3.6.4. This is a compatibility experiment, **not a production substitution**.
 
+## Alternative: native ARM64 from official PostgreSQL + PGDG
+
+An additional experimental image is available in [`infra/Dockerfile.db.arm64-pgdg`](../infra/Dockerfile.db.arm64-pgdg) with an isolated [`compose.arm64-pgdg-smoke.yaml`](../compose.arm64-pgdg-smoke.yaml). It builds on digest-pinned `postgres:17-trixie` and installs PostGIS from the official PGDG ARM64 repository rather than reusing the community image. See [the isolated PGDG probe guide](postgis-arm64-pgdg.md). Neither probe changes the default database or an existing Docker volume.
+
 ## Reproduce the disposable smoke test
 
 Requires Docker Compose >=2.20.2. The probe uses a distinct Compose project, no published ports, no network, no host data mounts, a 512 MiB limit, and a disposable tmpfs database. It loses all data on stop.
