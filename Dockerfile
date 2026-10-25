@@ -2,7 +2,7 @@
 # The same image runs the scheduled readers with another command (see deploy/compose.yaml).
 # Local development keeps backend/Dockerfile and the Vite dev server.
 
-FROM node:24-bookworm-slim AS frontend
+FROM node:26-bookworm-slim AS frontend
 WORKDIR /src/frontend
 RUN npm install --global pnpm@12.10.1
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
