@@ -4,6 +4,7 @@ import { Explore } from "../explore/Explore";
 import { useI18n, type I18n } from "../i18n/I18nProvider";
 import { Link } from "../router";
 import { Icon } from "../ui/Icon";
+import { ErrorBoundary } from "./ErrorBoundary";
 import { WorkspaceShell } from "./WorkspaceShell";
 
 type Key = Parameters<I18n["t"]>[0];
