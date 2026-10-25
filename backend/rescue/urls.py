@@ -11,6 +11,7 @@ from catalog.private_api import (
     SessionView,
     SnapshotsView,
 )
+from catalog.private_credentials import VolunteerCredentialsView
 from catalog.private_history import HistoryView
 from catalog.private_imports import (
     DiagnoseView,
@@ -115,6 +116,7 @@ urlpatterns = [
     path("api/v1/timeline/", TimelineView.as_view()),
     path("api/private/v1/me/", MeView.as_view()),
     path("api/private/v1/session/", SessionView.as_view()),
+    path("api/private/v1/credentials/", VolunteerCredentialsView.as_view()),
     path("api/private/v1/history/", HistoryView.as_view()),
     path("api/private/v1/invitations/", InvitationsView.as_view()),
     path("api/private/v1/invitations/check/", InvitationCheckView.as_view()),
