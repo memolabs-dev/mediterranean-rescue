@@ -58,9 +58,11 @@ services:
       - db:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", 'PGPASSWORD="$$DB_PASSWORD" psql -h 127.0.0.1 -U rescue -d rescue -Atqc "SELECT 1"']
-      interval: 5s
+      interval: 30s
       timeout: 3s
-      retries: 30
+      retries: 3
+      start_period: 60s
+      start_interval: 3s
     mem_limit: 512m
 
 volumes:
