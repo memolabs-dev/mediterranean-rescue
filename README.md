@@ -15,6 +15,7 @@ This is an independent volunteer project, started from the [Data for Good](https
 - **Team space** (`/workspace`): a workstation for volunteers. Verify an operation against the logbook sentence it was read from, prepare and publish, match port names, follow what changed in the sources, see who decided what and why (History), practise on an invented operation first.
 - **Two scheduled readers:** the Google Sheets tabs every five minutes, the public logbook every six hours. They stage rows privately; nothing is linked, drafted or published automatically ([ADR 0012](docs/decisions/0012-scheduled-sheet-reading-and-public-team-split.md), [ADR 0014](docs/decisions/0014-public-logbook-as-a-source.md)).
 - **Invitations** by single-use link, roles by group, every decision recorded with its author, date and reason ([ADR 0015](docs/decisions/0015-invitations-by-single-use-link.md)).
+- **Returning volunteers:** after accepting a link, an eligible volunteer may set a password on the dashboard to sign in again later; this does not provide automatic forgotten-password recovery ([ADR 0018](docs/decisions/0018-volunteer-first-login-credentials.md)).
 
 ## Stack
 

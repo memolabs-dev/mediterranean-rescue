@@ -4,6 +4,7 @@ import { useI18n, type I18n } from "../i18n/I18nProvider";
 import { Link } from "../router";
 import { Icon } from "../ui/Icon";
 import { journeyDone, markJourney } from "./journey";
+import { VolunteerCredentials } from "./VolunteerCredentials";
 import { WorkspaceShell } from "./WorkspaceShell";
 
 type Key = Parameters<I18n["t"]>[0];
@@ -172,6 +173,8 @@ function Home({ me }: { me: Me }) {
         <h1>{t("home.hello", { name: me.username })}</h1>
         <p>{t("home.lead")}</p>
       </div>
+
+      <VolunteerCredentials />
 
       {/* One person, one task, one obvious next action (25 October 2026). */}
       <section className="team-next" aria-labelledby="team-next-title">
