@@ -6,6 +6,7 @@ import { kinds } from "../filters";
 import { useI18n } from "../i18n/I18nProvider";
 import { changeQuery, Link, useLocation } from "../router";
 import { formatPosition } from "../shared/geo";
+import { useDesktopViewport } from "../shared/viewport";
 import { Icon } from "../ui/Icon";
 import { PreviewBody, PublicBody } from "./EventBody";
 import { fromNewsSite, missionName } from "./Evidence";
@@ -71,6 +72,7 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
   const i18n = useI18n();
   const { t } = i18n;
   const preview = audience === "team";
+  const desktop = useDesktopViewport();
   const { query } = useLocation();
   const requested = VIEWS.find((item) => item.value === query.get("view"));
   const view: View = requested?.value ?? "feed";
@@ -433,7 +435,9 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
           </div>
 
           <div className="explore-map explore-map--inline" data-open={mapOpen || undefined} data-full={mapFull || undefined}>
-            <MapPanel points={invalid ? [] : points} activeId={activeId} focusId={openId ?? pinnedId} followId={followId} onSelect={selectFromMap} truncated={Boolean(map?.truncated)} />
+            {!desktop && mapOpen && (
+              <MapPanel points={invalid ? [] : points} activeId={activeId} focusId={openId ?? pinnedId} followId={followId} onSelect={selectFromMap} truncated={Boolean(map?.truncated)} />
+            )}
             <BaseButton
               className="icon-button map-full-toggle"
               aria-label={t(mapFull ? "map.full.close" : "map.full.open")}
@@ -565,16 +569,18 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
 
         <aside className="explore-map explore-map--side" aria-label={t("map.label")}>
           {/* On wide screens the timeline floats over the bottom of the map, as in the chosen mock-up. */}
-          {view === "timeline" && renderTimeline("timeline--overlay", setOverlay)}
-          <MapPanel
-            points={invalid ? [] : points}
-            activeId={activeId}
-            focusId={openId ?? pinnedId}
-            followId={followId}
-            onSelect={selectFromMap}
-            truncated={Boolean(map?.truncated)}
-            insetBottom={view === "timeline" ? overlayHeight : 0}
-          />
+          {desktop && view === "timeline" && renderTimeline("timeline--overlay", setOverlay)}
+          {desktop && (
+            <MapPanel
+              points={invalid ? [] : points}
+              activeId={activeId}
+              focusId={openId ?? pinnedId}
+              followId={followId}
+              onSelect={selectFromMap}
+              truncated={Boolean(map?.truncated)}
+              insetBottom={view === "timeline" ? overlayHeight : 0}
+            />
+          )}
         </aside>
       </div>
     </div>
@@ -599,11 +605,27 @@ function MapPanel({
   insetBottom?: number;
 }) {
   const { t } = useI18n();
+  const placeholder = useRef<HTMLDivElement>(null);
+  // Do not download MapLibre, its worker or coastline for an off-screen mobile map.
+  const [nearby, setNearby] = useState(() => typeof IntersectionObserver === "undefined");
+  useEffect(() => {
+    if (nearby || !placeholder.current || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      (entries) => { if (entries.some((entry) => entry.isIntersecting)) setNearby(true); },
+      { rootMargin: "180px" },
+    );
+    observer.observe(placeholder.current);
+    return () => observer.disconnect();
+  }, [nearby]);
   return (
-    <div className="map-card">
-      <Suspense fallback={<div className="map-card__loading">{t("map.loading")}</div>}>
-        <EventMap points={points} onSelect={onSelect} activeId={activeId} focusId={focusId} followId={followId} insetBottom={insetBottom} />
-      </Suspense>
+    <div className="map-card" ref={placeholder}>
+      {nearby ? (
+        <Suspense fallback={<div className="map-card__loading">{t("map.loading")}</div>}>
+          <EventMap points={points} onSelect={onSelect} activeId={activeId} focusId={focusId} followId={followId} insetBottom={insetBottom} />
+        </Suspense>
+      ) : (
+        <div className="map-card__loading" role="status">{t("map.loading")}</div>
+      )}
       {truncated && <p className="map-card__note">{t("map.truncated")}</p>}
     </div>
   );
