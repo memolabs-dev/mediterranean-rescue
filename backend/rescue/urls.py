@@ -51,8 +51,8 @@ from django.db import connection
 from django.http import FileResponse, Http404, JsonResponse
 from django.middleware.csrf import get_token
 from django.urls import path, re_path
-from django.views.defaults import page_not_found
 from django.views.decorators.http import require_GET, require_safe
+from django.views.defaults import page_not_found
 from drf_spectacular.views import SpectacularAPIView
 
 
