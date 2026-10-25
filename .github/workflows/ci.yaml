@@ -91,9 +91,39 @@ jobs:
           node-version: '24'
       - name: Install package manager
         run: npm install --global pnpm@12.10.1
-      - name: Install locked frontend dependencies and browsers
+      - name: Install locked frontend dependencies
         working-directory: frontend
-        run: pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium webkit
+        run: pnpm install --frozen-lockfile
+      # Browser downloads intermittently stalled for >7 min on hosted runners.
+      # Cache exact lockfile only; Linux packages always need independent installation.
+      - name: Restore versioned Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('frontend/pnpm-lock.yaml') }}
+      - name: Install browser system dependencies
+        working-directory: frontend
+        timeout-minutes: 5
+        run: |
+          date -u '+Browser system dependencies started: %FT%TZ'
+          pnpm exec playwright install-deps chromium webkit
+          date -u '+Browser system dependencies completed: %FT%TZ'
+      - name: Verify browser binaries, retry transient CDN failures
+        working-directory: frontend
+        timeout-minutes: 9
+        run: |
+          date -u '+Browser binary verification started: %FT%TZ'
+          for attempt in 1 2 3; do
+            # Always verify even on a cache hit: broken caches must never skip E2E.
+            if timeout 150s pnpm exec playwright install chromium webkit; then
+              date -u '+Browser binaries ready: %FT%TZ'
+              exit 0
+            fi
+            echo "::warning::Playwright download/verification attempt $attempt failed"
+            if [ "$attempt" -lt 3 ]; then sleep $((attempt * 10)); fi
+          done
+          echo "::error::Playwright browsers not installed after three attempts"
+          exit 1
       - name: Run the end-to-end tests
         working-directory: frontend
         env:
