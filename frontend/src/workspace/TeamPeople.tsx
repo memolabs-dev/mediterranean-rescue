@@ -32,7 +32,7 @@ function InviteForm({ roles, onCreated }: { roles: { id: number; key: string }[]
   const submit = async () => {
     setSubmitted(true);
     setFailure(null);
-    if (!emailOk) return;
+    if (!emailOk || chosen.length === 0) return;
     try {
       const created = await create.mutateAsync({ body: { email: email.trim(), roles: chosen } });
       onCreated({ link: `${window.location.origin}/invite#${created.token}`, email: email.trim(), expires: created.expires_at });
@@ -66,7 +66,11 @@ function InviteForm({ roles, onCreated }: { roles: { id: number; key: string }[]
         onChange={(event) => setEmail(event.target.value)}
         error={submitted && !emailOk ? t("team.invite.emailMissing") : null}
       />
-      <fieldset className="team-invite__roles">
+      <fieldset
+        className="team-invite__roles"
+        aria-invalid={submitted && chosen.length === 0 ? "true" : undefined}
+        aria-describedby={submitted && chosen.length === 0 ? "team-invite-role-error" : undefined}
+      >
         <legend>{t("team.invite.roles")}</legend>
         {roles.map((role) => (
           <Checkbox
@@ -77,6 +81,11 @@ function InviteForm({ roles, onCreated }: { roles: { id: number; key: string }[]
           />
         ))}
         <p className="review-note">{t("team.invite.rolesHelp")}</p>
+        {submitted && chosen.length === 0 && (
+          <div id="team-invite-role-error">
+            <InlineMessage tone="error">{t("team.invite.roleMissing")}</InlineMessage>
+          </div>
+        )}
       </fieldset>
       <Button type="submit" variant="primary" size="lg" loading={create.isPending}>
         {t("team.invite.submit")}

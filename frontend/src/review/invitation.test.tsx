@@ -52,6 +52,32 @@ describe("invitation by link", () => {
     expect(await screen.findByRole("heading", { name: "This link no longer works" })).toBeTruthy();
   });
 
+  it("refuses a roleless invitation in the form, then accepts an explicit role", async () => {
+    const { calls } = fakeServer({
+      "GET /api/csrf/": () => ({ body: { csrfToken: "t" } }),
+      "GET /api/private/v1/me/": () => ({ body: COORDINATOR }),
+      "GET /api/private/v1/invitations/": () => ({
+        body: { roles: [{ id: 1, key: "verify" }], items: [] },
+      }),
+      "POST /api/private/v1/invitations/": (call) => {
+        expect(call.body).toEqual({ email: "new@example.org", roles: [1] });
+        return { status: 201, body: { id: "00000000-0000-0000-0000-0000000000e1", token: TOKEN, expires_at: "2026-10-28T10:00:00Z" } };
+      },
+    });
+    render(<TeamPeople />, "/workspace/team");
+    await userEvent.type(await screen.findByRole("textbox", { name: "Their email address" }), "new@example.org");
+    await userEvent.click(screen.getByRole("button", { name: "Create the invitation link" }));
+    const error = await screen.findByRole("alert");
+    expect(error.textContent).toBe("Choose at least one volunteer role.");
+    expect(error.closest("fieldset")?.getAttribute("aria-invalid")).toBe("true");
+    expect(calls.filter((call) => call.path === "/api/private/v1/invitations/" && call.method === "POST")).toHaveLength(0);
+    await userEvent.click(screen.getByRole("checkbox", { name: "Verify events and port names" }));
+    expect(screen.queryByRole("alert")).toBeNull();
+    await userEvent.click(screen.getByRole("button", { name: "Create the invitation link" }));
+    expect(await screen.findByRole("heading", { name: /new@example.org/ })).toBeTruthy();
+    expect(calls.filter((call) => call.path === "/api/private/v1/invitations/" && call.method === "POST")).toHaveLength(1);
+  });
+
   it("a coordinator creates a link with volunteer roles and sees it once", async () => {
     let created = false;
     fakeServer({
