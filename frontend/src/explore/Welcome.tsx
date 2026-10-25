@@ -20,6 +20,7 @@ function dismissedBefore() {
 export function Welcome({ training = false }: { training?: boolean }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(() => !dismissedBefore());
+  const [expanded, setExpanded] = useState(false);
   if (!open) return null;
   const close = () => {
     setOpen(false);
@@ -30,14 +31,24 @@ export function Welcome({ training = false }: { training?: boolean }) {
     }
   };
   return (
-    <section className="welcome" aria-labelledby="welcome-title">
+    <section className={`welcome${expanded ? " welcome--expanded" : ""}`} aria-labelledby="welcome-title">
       <div className="welcome__head">
         <h2 id="welcome-title">{t("welcome.title")}</h2>
         <BaseButton className="icon-button welcome__close" aria-label={t("welcome.close")} onClick={close}>
           <Icon name="close" size={18} />
         </BaseButton>
       </div>
-      <ul className="welcome__points">
+      <p className="welcome__summary">{t("welcome.mobileSummary")}</p>
+      <BaseButton
+        className="welcome__toggle"
+        aria-expanded={expanded}
+        aria-controls="welcome-points"
+        onClick={() => setExpanded((value) => !value)}
+      >
+        {t(expanded ? "welcome.less" : "welcome.details")}
+        <Icon name="chevronDown" size={16} />
+      </BaseButton>
+      <ul className="welcome__points" id="welcome-points">
         {POINTS.map((point) => (
           <li key={point}>{t(point === "what" && training ? "welcome.whatTraining" : `welcome.${point}`)}</li>
         ))}

@@ -50,3 +50,22 @@ test("an operation opened from the feed has a link that reopens it", async ({ pa
   await page.goto(`/?event=${items[0]!.id}`);
   await expect(page.getByRole("link", { name: /Copy the link to this record|Copier le lien/ }).or(page.getByRole("button", { name: /Copy the link to this record|Copier le lien/ })).first()).toBeVisible();
 });
+
+test("the phone's first-visit notice leaves the map visible and expands its caveats", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const expand = page.getByRole("button", { name: "Read the three essential points" });
+  await expect(expand).toBeVisible();
+  await expect(expand).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator("#welcome-points")).toBeHidden();
+  await expect(page.locator(".explore-map--inline")).toBeVisible();
+  await expand.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#welcome-points")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Hide the essential points" })).toHaveAttribute("aria-expanded", "true");
+  await page.getByRole("button", { name: "Hide the essential points" }).click();
+  await expect(page.locator("#welcome-points")).toBeHidden();
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(page.locator("#welcome-points")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Read the three essential points" })).toBeHidden();
+});
