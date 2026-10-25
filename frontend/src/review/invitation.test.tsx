@@ -78,6 +78,55 @@ describe("invitation by link", () => {
     expect(calls.filter((call) => call.path === "/api/private/v1/invitations/" && call.method === "POST")).toHaveLength(1);
   });
 
+  it("prepares a new link for a returning volunteer without copying permissions or sending early", async () => {
+    const { calls } = fakeServer({
+      "GET /api/csrf/": () => ({ body: { csrfToken: "t" } }),
+      "GET /api/private/v1/me/": () => ({ body: COORDINATOR }),
+      "GET /api/private/v1/invitations/": () => ({
+        body: {
+          roles: [{ id: 1, key: "verify" }, { id: 2, key: "prepare" }],
+          items: [{
+            id: "00000000-0000-0000-0000-0000000000e2",
+            email: "returning@example.org",
+            roles: ["prepare"],
+            invited_by: "coordinator",
+            created_at: "2026-10-22T10:00:00Z",
+            expires_at: "2026-10-25T10:00:00Z",
+            status: "used",
+            used_by: "returning",
+          }],
+        },
+      }),
+      "POST /api/private/v1/invitations/": (call) => {
+        expect(call.body).toEqual({ email: "returning@example.org", roles: [1] });
+        return {
+          status: 201,
+          body: {
+            id: "00000000-0000-0000-0000-0000000000e3",
+            token: TOKEN,
+            expires_at: "2026-10-28T10:00:00Z",
+          },
+        };
+      },
+    });
+    render(<TeamPeople />, "/workspace/team");
+    await screen.findByRole("textbox", { name: "Their email address" });
+    await userEvent.click(screen.getByRole("button", { name: "Prepare a new link" }));
+    expect((screen.getByRole("textbox", { name: "Their email address" }) as HTMLInputElement).value).toBe("returning@example.org");
+    expect(screen.getByText(/no permissions are copied automatically/)).toBeTruthy();
+    expect(screen.getByRole("checkbox", { name: "Verify events and port names" }).getAttribute("aria-checked")).toBe("false");
+    expect(screen.getByRole("checkbox", { name: "Prepare verified events" }).getAttribute("aria-checked")).toBe("false");
+    const invitePosts = () => calls.filter((call) => call.method === "POST" && call.path === "/api/private/v1/invitations/");
+    expect(invitePosts()).toHaveLength(0);
+    await userEvent.click(screen.getByRole("button", { name: "Create the invitation link" }));
+    expect((await screen.findByRole("alert")).textContent).toContain("Choose at least one volunteer role.");
+    expect(invitePosts()).toHaveLength(0);
+    await userEvent.click(screen.getByRole("checkbox", { name: "Verify events and port names" }));
+    await userEvent.click(screen.getByRole("button", { name: "Create the invitation link" }));
+    expect(await screen.findByRole("heading", { name: /returning@example.org/ })).toBeTruthy();
+    expect(invitePosts()).toHaveLength(1);
+  });
+
   it("a coordinator creates a link with volunteer roles and sees it once", async () => {
     let created = false;
     fakeServer({

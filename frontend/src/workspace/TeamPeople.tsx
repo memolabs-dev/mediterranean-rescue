@@ -19,11 +19,18 @@ interface Created {
 
 // The coordinator's screen: invite a volunteer by link, see who joined, take back a link that has
 // not served (ADR 0015). The application sends no email: the coordinator sends the link.
-function InviteForm({ roles, onCreated }: { roles: { id: number; key: string }[]; onCreated: (created: Created) => void }) {
+function InviteForm({
+  roles, onCreated, initialEmail = "", returning = false,
+}: {
+  roles: { id: number; key: string }[];
+  onCreated: (created: Created) => void;
+  initialEmail?: string;
+  returning?: boolean;
+}) {
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const create = api.useMutation("post", "/api/private/v1/invitations/");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(initialEmail);
   const [chosen, setChosen] = useState<number[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
@@ -57,6 +64,7 @@ function InviteForm({ roles, onCreated }: { roles: { id: number; key: string }[]
     >
       <h2>{t("team.invite.title")}</h2>
       <p className="review-note">{t("team.invite.lead")}</p>
+      {returning && <InlineMessage tone="info">{t("team.invite.returning")}</InlineMessage>}
       {failure && <InlineMessage tone="error">{failure}</InlineMessage>}
       <TextField
         label={t("team.invite.email")}
@@ -143,11 +151,25 @@ function Invitations() {
   const list = api.useQuery("get", "/api/private/v1/invitations/", {});
   const revoke = api.useMutation("delete", "/api/private/v1/invitations/{id}/");
   const [created, setCreated] = useState<Created | null>(null);
+  const [returning, setReturning] = useState<{ id: string; email: string } | null>(null);
   if (list.error) return <InlineMessage tone="error">{t("team.error.load")}</InlineMessage>;
   if (!list.data) return <p className="review-note">{t("team.loading")}</p>;
   return (
     <div className="team">
-      {created ? <CreatedLink created={created} onDone={() => setCreated(null)} /> : <InviteForm roles={list.data.roles} onCreated={setCreated} />}
+      {created ? (
+        <CreatedLink created={created} onDone={() => setCreated(null)} />
+      ) : (
+        <InviteForm
+          key={returning?.id ?? "new"}
+          roles={list.data.roles}
+          initialEmail={returning?.email ?? ""}
+          returning={Boolean(returning)}
+          onCreated={(value) => {
+            setCreated(value);
+            setReturning(null);
+          }}
+        />
+      )}
       <section aria-labelledby="team-list-title" className="team-list">
         <h2 id="team-list-title">{t("team.list.title")}</h2>
         {list.data.items.length === 0 ? (
@@ -168,6 +190,18 @@ function Invitations() {
                     })}
                   </p>
                 </div>
+                {invitation.status === "used" && (
+                  <Button
+                    size="sm"
+                    variant="quiet"
+                    onClick={() => {
+                      setCreated(null);
+                      setReturning({ id: invitation.id, email: invitation.email });
+                    }}
+                  >
+                    {t("team.list.reinvite")}
+                  </Button>
+                )}
                 {invitation.status === "waiting" && (
                   <Button
                     size="sm"
