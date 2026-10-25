@@ -1,0 +1,4 @@
+# Experimental Apple Silicon image. Do not use with existing PGDATA volumes.
+# ARM64-specific manifest selected from the pinned multi-arch index.
+FROM imresamu/postgis:17-3.6.1-trixie@sha256:ad502214bf88d074cbed19315c7b846b612e20dff0fcd8cc91bdf0f92f636b2d
+COPY --chmod=0644 infra/init-db.sh /docker-entrypoint-initdb.d/20-rescue.sh
