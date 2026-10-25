@@ -38,6 +38,12 @@ describe("about the data", () => {
     renderPage(<Welcome />);
     expect(screen.getByRole("heading", { name: "New here? Three things to know" })).toBeTruthy();
     expect(screen.getByRole("link", { name: /Read about the data/ }).getAttribute("href")).toBe("/about");
+    const toggle = screen.getByRole("button", { name: "Read the three essential points" });
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    await userEvent.click(toggle);
+    expect(screen.getByRole("button", { name: "Hide the essential points" }).getAttribute("aria-expanded")).toBe("true");
+    await userEvent.click(screen.getByRole("button", { name: "Hide the essential points" }));
+    expect(screen.getByRole("button", { name: "Read the three essential points" }).getAttribute("aria-expanded")).toBe("false");
     await userEvent.click(screen.getByRole("button", { name: "Close the introduction" }));
     expect(screen.queryByRole("heading", { name: "New here? Three things to know" })).toBeNull();
     expect(window.localStorage.getItem("welcome-dismissed")).toBe("1");
