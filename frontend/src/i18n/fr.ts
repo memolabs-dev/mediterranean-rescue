@@ -786,6 +786,7 @@ export const fr: Messages = {
   "team.invite.email": "Son adresse e-mail",
   "team.invite.emailMissing": "Saisissez une adresse e-mail valide.",
   "team.invite.roles": "Ce que la personne pourra faire",
+  "team.invite.roleMissing": "Choisissez au moins un rôle bénévole.",
   "team.invite.rolesHelp": "Publier et coordonner ne sont donnés que par un superutilisateur.",
   "team.invite.submit": "Créer le lien d’invitation",
   "team.created.title": "Lien prêt pour {email}",

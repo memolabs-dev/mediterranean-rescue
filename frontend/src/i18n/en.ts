@@ -783,6 +783,7 @@ export const en = {
   "team.invite.email": "Their email address",
   "team.invite.emailMissing": "Enter a valid email address.",
   "team.invite.roles": "What they can do",
+  "team.invite.roleMissing": "Choose at least one volunteer role.",
   "team.invite.rolesHelp": "Publishing and coordinating are given by a superuser only.",
   "team.invite.submit": "Create the invitation link",
   "team.created.title": "Link ready for {email}",
