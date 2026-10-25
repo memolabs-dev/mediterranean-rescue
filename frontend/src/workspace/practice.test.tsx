@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { fakeServer } from "../test/fakeServer";
 import { renderWithI18n } from "../test/render";
 import { TeamPractice } from "./TeamPractice";
+import { journeyDone } from "./journey";
 
 const ME = {
   username: "newcomer",
@@ -33,7 +34,8 @@ describe("practice", () => {
     expect(screen.getByText(/A wrong row is never marked verified/)).toBeTruthy();
     await userEvent.click(screen.getByRole("button", { name: /Decide later/ }));
     expect(screen.getByRole("heading", { name: "That is all there is to it" })).toBeTruthy();
-    expect(window.localStorage.getItem("team-practice-done")).toBe("1");
+    expect(journeyDone("practice", "newcomer")).toBe(true);
+    expect(journeyDone("practice", "another-volunteer")).toBe(false);
     expect(calls.every((call) => call.method === "GET")).toBe(true);
   });
 });

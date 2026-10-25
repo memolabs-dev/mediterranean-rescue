@@ -9,6 +9,7 @@ import { fakeServer } from "../test/fakeServer";
 import { renderWithI18n } from "../test/render";
 import { PublishWorkspace } from "./PublishWorkspace";
 import { TeamHome } from "./TeamHome";
+import { journeyDone } from "./journey";
 
 const PUBLISHER = {
   username: "volunteer",
@@ -125,7 +126,7 @@ describe("team home", () => {
     expect(await within(steps[3]!).findByText("No written agreement recorded from: Fictitious source.")).toBeTruthy();
     expect(within(steps[3]!).getByText("Cannot start yet")).toBeTruthy();
     expect(await screen.findByText("3 port names to match to a known port.")).toBeTruthy();
-    expect(window.localStorage.getItem("team-intro-dismissed")).toBe("1");
+    expect(journeyDone("intro", "volunteer")).toBe(true);
   });
 });
 

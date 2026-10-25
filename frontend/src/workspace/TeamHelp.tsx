@@ -16,10 +16,10 @@ const GUIDES: { key: string; icon: IconName }[] = [
 
 // Short answers to what a volunteer asks while working: what is expected, why, an example. No
 // manual to read first; each guide fits on a phone screen.
-function Guides() {
+function Guides({ username }: { username: string }) {
   const { t } = useI18n();
   // Reading how publication works is a step of the volunteer's first journey.
-  useEffect(() => markJourney("publishGuide"), []);
+  useEffect(() => markJourney("publishGuide", username), [username]);
   return (
     <div className="help">
       <div className="practice__head">
@@ -54,7 +54,7 @@ export function TeamHelp() {
   const { t } = useI18n();
   return (
     <WorkspaceShell section="help" title={t("workspace.section.help")} className="review">
-      {() => <Guides />}
+      {(me) => <Guides key={me.username} username={me.username} />}
     </WorkspaceShell>
   );
 }
