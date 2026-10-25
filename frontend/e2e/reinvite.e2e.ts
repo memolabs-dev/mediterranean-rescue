@@ -7,7 +7,7 @@ test("coordinator prepares a fresh link without silently restoring permissions",
   await page.route((url) => url.pathname.startsWith("/api/"), async (route) => {
     const path = new URL(route.request().url()).pathname;
     const method = route.request().method();
-    let body: unknown = null;
+    let body: unknown;
     let status = 200;
     if (path === "/api/csrf/") body = { csrfToken: "synthetic-token" };
     else if (path === "/api/private/v1/me/") {
