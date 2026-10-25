@@ -111,7 +111,9 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
   const logbookOnly = preview && query.get("source") === LOGBOOK_SOURCE;
   const teamFilters = { ...filters, ...(logbookOnly ? { source: LOGBOOK_SOURCE } : {}) };
 
-  const page = (all: readonly unknown[], last: { has_next: boolean }) => (last.has_next ? all.length * PAGE : undefined);
+  // An intermediary can respond with HTML (e.g. a 502), leaving a missing API page.
+  // Never let pagination crash the entire site in that situation.
+  const page = (all: readonly unknown[], last: { has_next: boolean } | undefined) => (last?.has_next ? all.length * PAGE : undefined);
   const publicFeed = api.useInfiniteQuery(
     "get",
     "/api/v1/events/",
@@ -149,9 +151,13 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
   const [overlay, setOverlay] = useState<HTMLElement | null>(null);
   const overlayHeight = useHeight(overlay);
   const feed = preview ? previewFeed : publicFeed;
+  const malformed = Boolean(feed.data?.pages.some((response) => !response));
+  // Preserve previously loaded pages when an intermediary returns an invalid next page.
+  const publicPages = (publicFeed.data?.pages ?? []).filter(Boolean);
+  const previewPages = (previewFeed.data?.pages ?? []).filter(Boolean);
   const map = preview ? previewMap.data : publicMap.data;
   const items: FeedItem[] = preview
-    ? (previewFeed.data?.pages ?? []).flatMap((p) =>
+    ? previewPages.flatMap((p) =>
         p.items.map((row) => ({
           id: row.id,
           date: row.occurred_on,
@@ -169,7 +175,7 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
             : t("explore.origin.update", { date: i18n.date(row.exported_at ? row.exported_at.slice(0, 10) : "") }),
         })),
       )
-    : (publicFeed.data?.pages ?? []).flatMap((p) =>
+    : publicPages.flatMap((p) =>
         p.items.map((event) => ({
           id: event.id,
           date: event.occurred_on,
@@ -476,7 +482,7 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
             </div>
           )}
 
-          {feed.error && !feed.data ? (
+          {(feed.error || malformed) && (!feed.data || items.length === 0) ? (
             <div className="explore-state" role="alert">
               <Icon name="alert" size={22} />
               <p>{t("events.loadError")}</p>
@@ -544,7 +550,7 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
             </ol>
           )}
           {/* A failed "More" or refresh keeps the cards already loaded (frontend audit). */}
-          {feed.error && feed.data && (
+          {(feed.error || malformed) && items.length > 0 && (
             <p className="explore-state__inline" role="alert">
               {t("events.loadError")}{" "}
               <BaseButton className="link-button" onClick={() => void (feed.isFetchNextPageError ? feed.fetchNextPage() : feed.refetch())}>
