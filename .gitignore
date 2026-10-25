@@ -177,3 +177,7 @@ data/local/
 
 # Production stack secrets and sheet links (deploy/README.md)
 deploy/sheets-sync.json
+
+# Playwright
+frontend/test-results/
+frontend/playwright-report/

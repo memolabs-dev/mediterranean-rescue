@@ -1356,6 +1356,8 @@ export interface components {
             evidence: components["schemas"]["LogbookEvidence"] | null;
         };
         SessionState: {
+            /** @description Someone is signed in in this browser. Public pages ask this, never /me/. */
+            signed_in: boolean;
             /** @description This local development machine can sign the team in without a password. */
             local_auto_login: boolean;
         };

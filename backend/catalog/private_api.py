@@ -191,6 +191,9 @@ class SignInSerializer(serializers.Serializer):
 
 
 class SessionStateSerializer(serializers.Serializer):
+    signed_in = serializers.BooleanField(
+        help_text="Someone is signed in in this browser. Public pages ask this, never /me/."
+    )
     local_auto_login = serializers.BooleanField(
         help_text="This local development machine can sign the team in without a password."
     )
@@ -238,7 +241,12 @@ class SessionView(PrivateView):
     )
     def get(self, request):
         return Response(
-            SessionStateSerializer({"local_auto_login": local_auto_login_user() is not None}).data
+            SessionStateSerializer(
+                {
+                    "signed_in": request.user.is_authenticated,
+                    "local_auto_login": local_auto_login_user() is not None,
+                }
+            ).data
         )
 
     @extend_schema(

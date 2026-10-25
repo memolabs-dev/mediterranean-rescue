@@ -288,9 +288,11 @@ class LocalAutoLoginTests(TestCase):
             client = Client(enforce_csrf_checks=True)
             client.force_login(User.objects.get(username="local-team"))
             token = client.get("/api/csrf/").json()["csrfToken"]
-            self.assertTrue(client.get("/api/private/v1/session/").json()["local_auto_login"])
+            state = client.get("/api/private/v1/session/").json()
+            self.assertEqual(state, {"signed_in": True, "local_auto_login": True})
             client.delete("/api/private/v1/session/", HTTP_X_CSRFTOKEN=token)
             self.assertEqual(client.cookies[LOCAL_AUTO_LOGIN_OFF].value, "1")
+            self.assertFalse(client.get("/api/private/v1/session/").json()["signed_in"])
 
             request = RequestFactory().get("/api/private/v1/me/")
             request.COOKIES[LOCAL_AUTO_LOGIN_OFF] = "1"

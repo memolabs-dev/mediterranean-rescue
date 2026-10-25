@@ -65,7 +65,7 @@ describe("main screen preview", () => {
   it("the public page stays public even for a signed-in team member", async () => {
     const { calls } = fakeServer({
       ...EMPTY_PUBLIC,
-      "GET /api/private/v1/me/": () => ({ body: { username: "r", permissions: { review_identity: true, stage_snapshot: true } } }),
+      "GET /api/private/v1/session/": () => ({ body: { signed_in: true, local_auto_login: false } }),
     });
     renderApp();
     expect(await screen.findByText("Nothing published yet")).toBeTruthy();

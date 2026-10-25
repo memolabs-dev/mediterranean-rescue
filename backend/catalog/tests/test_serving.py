@@ -25,6 +25,11 @@ class FrontendTests(SimpleTestCase):
             self.assertEqual(self.client.get("/api/v1/nothing/").status_code, 404)
             self.assertEqual(self.client.get("/static/nothing.js").status_code, 404)
 
+    def test_an_unknown_api_address_answers_json(self):
+        response = self.client.get("/api/v1/nothing/")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json(), {"code": "http_404", "detail": "Not found"})
+
     def test_without_a_built_frontend_nothing_is_served(self):
         with override_settings(FRONTEND_DIST=""):
             self.assertEqual(self.client.get("/about").status_code, 404)

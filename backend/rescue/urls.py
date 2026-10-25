@@ -51,6 +51,7 @@ from django.db import connection
 from django.http import FileResponse, Http404, JsonResponse
 from django.middleware.csrf import get_token
 from django.urls import path, re_path
+from django.views.defaults import page_not_found
 from django.views.decorators.http import require_GET, require_safe
 from drf_spectacular.views import SpectacularAPIView
 
@@ -70,6 +71,16 @@ def health(request):
     except Exception:
         return JsonResponse({"status": "unavailable"}, status=503)
     return JsonResponse({"status": "ok"})
+
+
+def not_found(request, exception=None):
+    """An unknown API address answers JSON like the rest of the API; others get Django's page."""
+    if request.path.startswith("/api/"):
+        return JsonResponse({"code": "http_404", "detail": "Not found"}, status=404)
+    return page_not_found(request, exception)
+
+
+handler404 = not_found
 
 
 @require_safe

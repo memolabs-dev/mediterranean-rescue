@@ -14,8 +14,9 @@ export function PublicBar() {
   const i18n = useI18n();
   const { t } = i18n;
   const { pathname } = useLocation();
-  const me = api.useQuery("get", "/api/private/v1/me/", {}, { retry: false });
-  const signedIn = me.data?.permissions.review_identity === true;
+  // The session state answers 200 to everyone: a visitor's console stays clean (no 401 from /me/).
+  const session = api.useQuery("get", "/api/private/v1/session/", {}, { retry: false });
+  const signedIn = session.data?.signed_in === true;
   return (
     <header className="explore-bar">
       <Link to="/" className="explore-bar__brand">
