@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { renderWithI18n } from "../test/render";
 import { MapPeek } from "./MapPeek";
-import { MiniMap } from "./MiniMap";
+import { MiniMap, MiniMapDefinitions } from "./MiniMap";
 
 function render(ui: React.ReactElement) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -33,6 +33,26 @@ describe("map on a phone", () => {
     expect(onOpen).not.toHaveBeenCalled();
     await userEvent.click(screen.getByRole("button", { name: /Open the record/ }));
     expect(onOpen).toHaveBeenCalledOnce();
+  });
+
+  it("shares one coastline path across 25 accessible locators", () => {
+    render(
+      <>
+        <MiniMapDefinitions />
+        {Array.from({ length: 25 }, (_, i) => (
+          <MiniMap
+            key={i}
+            position={{ longitude: 12 + i * 0.1, latitude: 34.5 }}
+            label={"Locator " + (i + 1)}
+          />
+        ))}
+      </>,
+    );
+    expect(document.querySelectorAll("path#med-rescue-mini-land")).toHaveLength(1);
+    expect(document.querySelectorAll('use[href="#med-rescue-mini-land"]')).toHaveLength(25);
+    expect(screen.getAllByRole("img")).toHaveLength(25);
+    expect(screen.getByRole("img", { name: "Locator 1" })).toBeTruthy();
+    expect(screen.getByRole("img", { name: "Locator 25" })).toBeTruthy();
   });
 
   it("a locator without a position says so instead of showing an empty map", () => {
