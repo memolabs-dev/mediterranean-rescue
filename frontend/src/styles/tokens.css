@@ -19,6 +19,19 @@
   --sos-warning-surface: #FFF4D6;
   --sos-info: #234D7A;
   --sos-info-surface: #EEF4FA;
+  /* Map and event-kind palette: shared by CSS chips and MapLibre. */
+  --sos-ground: #EEEDF2;
+  --sos-water: #DFE3EE;
+  --sos-land: #FBFBFD;
+  --sos-coast: #C3C7D6;
+  --sos-kind-rescue: #2563A8;
+  --sos-kind-transfer: #404D6D;
+  --sos-kind-medevac: #17634A;
+  --sos-kind-incident: #B7791F;
+  --sos-kind-shipwreck: #9F2534;
+  --sos-kind-dead-missing: #1B2747;
+  --sos-warning-indicator: #C98A13;
+  --sos-selected-map-halo: rgba(232, 62, 27, 0.22);
 
   /* Proposed semantic colors. */
   --color-surface: var(--sos-white);

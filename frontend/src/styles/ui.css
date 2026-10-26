@@ -116,7 +116,7 @@
 .ui-dialog {
   position: fixed; z-index: var(--layer-dialog);
   top: 50%; left: 50%; transform: translate(-50%, -50%);
-  width: min(560px, calc(100vw - 2 * var(--layout-page-gutter-mobile)));
+  width: min(560px, calc(100% - 2 * var(--layout-page-gutter-mobile)));
   max-height: calc(100dvh - 2 * var(--space-8)); overflow: auto;
   padding: var(--space-6);
   background: var(--color-surface); color: var(--color-text);
@@ -136,14 +136,14 @@
   position: absolute; bottom: -1px; height: 3px;
   left: var(--active-tab-left); width: var(--active-tab-width);
   background: var(--color-selection-indicator);
-  transition: left var(--motion-normal) var(--motion-easing), width var(--motion-normal) var(--motion-easing);
+  /* Base UI positions the active tab; changing left/width is instantaneous to avoid layout animation. */
 }
 .ui-tabs__panel { padding: var(--space-4) 0; }
 
 .ui-disclosure__trigger { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--control-default-height); border: 0; background: transparent; font: inherit; font-weight: var(--type-label-weight); color: var(--color-text); cursor: pointer; }
 .ui-disclosure__chevron { display: inline-block; transition: transform var(--motion-fast) var(--motion-easing); }
 .ui-disclosure__trigger[data-panel-open] .ui-disclosure__chevron { transform: rotate(90deg); }
-.ui-disclosure__panel { overflow: hidden; height: var(--collapsible-panel-height); transition: height var(--motion-normal) var(--motion-easing); }
+.ui-disclosure__panel { overflow: hidden; height: var(--collapsible-panel-height); }
 .ui-disclosure__panel[data-starting-style], .ui-disclosure__panel[data-ending-style] { height: 0; }
 
 .ui-status { display: inline-flex; align-items: center; gap: var(--space-1); padding: 2px var(--space-2); border-radius: var(--radius-pill); font-size: var(--type-caption-size); line-height: var(--type-caption-line); font-weight: var(--type-label-weight); border: 1px solid currentColor; white-space: nowrap; }
