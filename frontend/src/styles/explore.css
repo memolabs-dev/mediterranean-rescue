@@ -1,16 +1,16 @@
 /* Main screen: a feed of event cards beside a live map (surface brief: .impeccable/surfaces). */
 .explore {
-  --ground: #eeedf2;
-  --water: #dfe3ee;
+  --ground: var(--sos-ground);
+  --water: var(--sos-water);
   --card-shadow: 0 1px 2px rgb(27 39 71 / 0.06), 0 10px 28px -14px rgb(27 39 71 / 0.22);
   --card-shadow-raised: 0 2px 4px rgb(27 39 71 / 0.08), 0 18px 40px -18px rgb(27 39 71 / 0.32);
   /* Orange-red stays reserved for selection and the one primary action. */
-  --kind-rescue: #2563a8;
-  --kind-transfer: #404d6d;
-  --kind-medevac: #17634a;
-  --kind-incident: #b7791f;
-  --kind-shipwreck: #9f2534;
-  --kind-dead_missing: #1b2747;
+  --kind-rescue: var(--sos-kind-rescue);
+  --kind-transfer: var(--sos-kind-transfer);
+  --kind-medevac: var(--sos-kind-medevac);
+  --kind-incident: var(--sos-kind-incident);
+  --kind-shipwreck: var(--sos-kind-shipwreck);
+  --kind-dead_missing: var(--sos-kind-dead-missing);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --bar-height: 60px;
   min-height: 100vh;
@@ -26,7 +26,7 @@
 .explore ::selection { background: #ffd9cf; color: var(--sos-navy); }
 .explore :focus-visible { outline: 3px solid var(--sos-navy); outline-offset: 2px; }
 .explore button { font: inherit; color: inherit; }
-.explore h1, .explore h2 { font-family: var(--font-family-sans); }
+.explore h1, .explore h2 { font-family: var(--font-family-sans); overflow-wrap: break-word; min-width: 0; }
 
 /* Top bar: the SOS navy band. */
 .explore-bar {
@@ -54,7 +54,7 @@
 .explore-bar__workspace:hover { background: rgb(255 255 255 / 0.18); }
 
 /* Body: one column on phones, feed beside a sticky map from 960px. */
-.explore-body { display: grid; }
+.explore-body { display: grid; width: 100%; max-width: var(--layout-max-content-width); margin-inline: auto; min-width: 0; }
 .explore-feed { display: grid; gap: var(--space-4); align-content: start; padding: var(--space-5) var(--layout-page-gutter-mobile) var(--space-10); min-width: 0; }
 .explore-map--side { display: none; }
 
@@ -86,10 +86,11 @@
 .composer__field input {
   width: 100%; height: 48px; padding: 0 44px 0 44px; border: 0; border-radius: 18px;
   background: var(--color-canvas); color: var(--color-text); font: inherit; font-size: 16px;
-  transition: box-shadow 0.2s var(--ease-out), background-color 0.2s var(--ease-out);
+  transition: background-color 0.2s var(--ease-out);
 }
 .composer__field input::placeholder { color: var(--color-text-muted); }
-.composer__field input:focus { outline: none; background: var(--sos-white); box-shadow: inset 0 0 0 2px var(--sos-navy); }
+.composer__field input:focus { background: var(--sos-white); box-shadow: inset 0 0 0 2px var(--sos-navy); }
+.composer__field input:focus-visible { outline: 3px solid var(--color-focus-on-light); outline-offset: 2px; }
 .composer__field input::-webkit-search-cancel-button { display: none; }
 .composer__clear {
   position: absolute; right: 6px; display: grid; place-items: center; width: 36px; height: 36px;
@@ -117,7 +118,7 @@
 .chip--incident .chip__dot { background: var(--kind-incident); }
 .chip--shipwreck .chip__dot { background: var(--kind-shipwreck); }
 .chip--dead_missing .chip__dot { background: var(--kind-dead_missing); box-shadow: 0 0 0 1.5px var(--sos-white); }
-.composer__period { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s var(--ease-out); }
+.composer__period { display: grid; grid-template-rows: 0fr; }
 .composer__period[data-open] { grid-template-rows: 1fr; }
 .composer__period-inner { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); min-height: 0; overflow: hidden; padding: 0 var(--space-2); }
 .composer__period:not([data-open]) .composer__period-inner { visibility: hidden; }
@@ -140,7 +141,7 @@
   background: var(--sos-white); font-weight: 700; font-size: 13px; font-variant-numeric: lining-nums tabular-nums;
 }
 .count::before { content: ""; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; }
-.count--to_review::before { background: #c98a13; }
+.count--to_review::before { background: var(--sos-warning-indicator); }
 .count--blocked::before { background: var(--kind-shipwreck); }
 .count--linked::before { background: var(--kind-medevac); }
 
@@ -162,7 +163,7 @@
   position: absolute; left: var(--space-3); right: var(--space-3); bottom: var(--space-3); margin: 0;
   padding: var(--space-2) var(--space-3); border-radius: 12px; background: rgb(255 255 255 / 0.94); font-size: 13px;
 }
-.explore-map--inline { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s var(--ease-out); }
+.explore-map--inline { display: grid; grid-template-rows: 0fr; }
 .explore-map--inline[data-open] { grid-template-rows: 1fr; }
 .explore-map--inline > .map-card { height: 240px; min-height: 0; }
 .explore-map--inline:not([data-open]) > .map-card { height: 0; box-shadow: none; }
@@ -374,7 +375,7 @@
 /* Team view embedded in the team space: no own bar, the workspace frame around it. */
 .review--wide { max-width: 1440px; }
 /* The whole data page sits on the reading ground, so the embedded view shows no seam. */
-body:has(.explore--team) { background: #eeedf2; }
+body:has(.explore--team) { background: var(--sos-ground); }
 .explore--team { --bar-height: 0px; min-height: 0; background: transparent; }
 .explore--team .explore-feed { padding-left: 0; padding-right: 0; }
 @media (min-width: 960px) {
@@ -460,7 +461,7 @@ body:has(.explore--team) { background: #eeedf2; }
 .timeline__bar { flex: 1; min-width: 1px; border-radius: 2px 2px 0 0; background: #c9ccd9; transition: background-color 0.2s var(--ease-out); }
 .timeline__bar--in { background: #7b86a8; }
 .timeline:has(.timeline__window) .timeline__bar--in { background: var(--sos-navy); }
-.timeline__window { position: absolute; top: -4px; bottom: -4px; border: 2px solid var(--sos-navy); border-radius: 10px; background: rgb(27 39 71 / 0.05); pointer-events: none; transition: left 0.15s var(--ease-out), width 0.15s var(--ease-out); }
+.timeline__window { position: absolute; top: -4px; bottom: -4px; border: 2px solid var(--sos-navy); border-radius: 10px; background: rgb(27 39 71 / 0.05); pointer-events: none; /* Instant state change: do not animate layout properties. */ }
 /* Two native ranges stacked: only their thumbs take the pointer, so both handles stay reachable. */
 .timeline__handles { position: relative; height: 28px; margin-top: -6px; }
 .timeline__handles input {
@@ -607,7 +608,7 @@ body:has(.explore--team) { background: #eeedf2; }
 
 /* Acceptance of 24 October 2026: a skip link, focus never clipped, the bar fits a phone. */
 .skip-link { position: absolute; left: var(--space-3); top: -60px; z-index: 100; padding: var(--space-2) var(--space-3); border-radius: 12px; background: var(--sos-white); color: var(--sos-navy); font-weight: 800; }
-.skip-link:focus { top: var(--space-2); }
+.skip-link:focus-visible { top: var(--space-2); }
 /* Strips that scroll sideways: room for the 3 px ring and its 2 px offset, never clipped. */
 .views, .chips { padding-top: 6px; padding-bottom: 6px; margin-top: -6px; margin-bottom: -6px; scroll-padding-inline: 48px; }
 /* More to see on the side: the edge fades only where there is more, and only while there is
