@@ -524,7 +524,6 @@ body:has(.explore--team) { background: var(--sos-ground); }
 .about__body { display: grid; gap: var(--space-4); max-width: 760px; margin: 0 auto; padding: var(--space-6) var(--layout-page-gutter-mobile) var(--space-16); }
 /* The page's own header: on the ground like the rest, never the legacy white header band. */
 .about__hero { display: grid; gap: var(--space-3); justify-items: start; padding: var(--space-4) 0 var(--space-2); background: transparent; border: 0; font-size: inherit; }
-.about__eyebrow { margin: 0; color: var(--sos-orange-dark-proposed); font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
 .about__hero h1 { margin: 0; font-size: clamp(30px, 6vw, 44px); line-height: 1.08; font-weight: 800; letter-spacing: -0.02em; color: var(--sos-navy); }
 .about__lead { margin: 0; max-width: 60ch; font-size: 18px; line-height: 1.55; color: var(--color-text); }
 .about__independent { display: flex; gap: var(--space-2); align-items: flex-start; margin: 0; padding: var(--space-3) var(--space-4); border-radius: 16px; background: rgb(27 39 71 / 0.06); color: var(--color-text-secondary); font-size: 14px; }
@@ -547,7 +546,8 @@ body:has(.explore--team) { background: var(--sos-ground); }
 .about__legend-open { justify-self: center; width: 18px; height: 18px; border-radius: 50%; background: var(--sos-orange); box-shadow: 0 0 0 3px var(--sos-white), 0 0 0 9px rgb(232 62 27 / 0.22); }
 .about__views { color: var(--color-text-secondary); font-size: 15px; }
 .about__words { display: grid; gap: var(--space-2); margin: 0; }
-.about__word { display: grid; gap: 2px; padding: var(--space-3) var(--space-4); border-radius: 14px; background: var(--color-canvas); }
+.about__word { display: grid; gap: var(--space-1); padding: var(--space-3) 0; border-bottom: 1px solid var(--color-border); }
+.about__word:last-child { border-bottom: 0; }
 .about__word dt { display: flex; align-items: center; gap: var(--space-2); font-weight: 800; }
 .about__word dd { margin: 0; color: var(--color-text-secondary); line-height: 1.5; }
 .about__steps li { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: var(--space-3); align-items: start; }

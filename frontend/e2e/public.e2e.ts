@@ -69,3 +69,27 @@ test("the phone's first-visit notice leaves the map visible and expands its cave
   await expect(page.locator("#welcome-points")).toBeVisible();
   await expect(page.getByRole("button", { name: "Read the three essential points" })).toBeHidden();
 });
+
+test("the public pages stay within the viewport on phones and wide desktops", async ({ page }) => {
+  for (const width of [390, 1920]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const route of ["/", "/about"]) {
+      await page.goto(route);
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+      await page.waitForLoadState("networkidle");
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      );
+      expect(overflow, `${route} at ${width}px must not scroll horizontally`).toBeLessThanOrEqual(1);
+    }
+  }
+});
+
+test("the about page explains the limits before the details", async ({ page }) => {
+  await page.goto("/about");
+  const lead = page.locator(".about__lead");
+  await expect(lead).toContainText("independent volunteer");
+  await expect(lead).toContainText("not the association");
+  const words = (await lead.innerText()).trim().split(/\s+/);
+  expect(words.length, "the first explanation should fit a short paragraph").toBeLessThan(50);
+});
