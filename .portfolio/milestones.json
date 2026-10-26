@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "milestones": [
+    {
+      "kind": "prototype",
+      "date": "2026-10-25",
+      "title": {
+        "fr": "Parcours de retour des bénévoles documenté",
+        "en": "Documented returning-volunteer onboarding"
+      },
+      "detail": {
+        "fr": "La PR fusionnée décrit un parcours d'invitation, de création facultative d'identifiants et de reconnexion, testé sur des données synthétiques. Le parcours réel avec un bénévole n'est pas vérifié publiquement.",
+        "en": "The merged PR documents invitations, optional credential setup and sign-in, tested with synthetic scenarios. A real volunteer's end-to-end journey has not been publicly verified."
+      },
+      "evidenceUrl": "https://github.com/memolabs-dev/mediterranean-rescue/pull/24"
+    },
+    {
+      "kind": "demo",
+      "date": "2026-10-26",
+      "title": {
+        "fr": "Carte et interface publiques accessibles",
+        "en": "Public map and interface accessible"
+      },
+      "detail": {
+        "fr": "Le 26 octobre, l'accueil public a répondu en HTTPS (200). La PR citée documente des tests sur l'image de production ; ce contrôle ne valide ni les parcours authentifiés ni la complétude des données ou l'adoption par l'association.",
+        "en": "On 26 October the public homepage responded over HTTPS (200). The cited PR documents tests against the production image; this check does not validate authenticated journeys, data completeness or adoption by the association."
+      },
+      "evidenceUrl": "https://github.com/memolabs-dev/mediterranean-rescue/pull/6",
+      "demoUrl": "https://rescue.memolabs.dev/"
+    }
+  ]
+}
