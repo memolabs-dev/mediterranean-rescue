@@ -72,6 +72,9 @@ export function EventMap({
 
   useEffect(() => {
     if (failed || !element.current) return;
+    // CSS design tokens are also the single source for MapLibre's canvas palette.
+    const design = getComputedStyle(element.current);
+    const color = (name: string) => design.getPropertyValue(name).trim();
     let instance: LibreMap;
     try {
       instance = new LibreMap({
@@ -86,9 +89,9 @@ export function EventMap({
           version: 8,
           sources: { land: { type: "geojson", data: "/land.geojson" } },
           layers: [
-            { id: "water", type: "background", paint: { "background-color": "#dfe3ee" } },
-            { id: "land", type: "fill", source: "land", paint: { "fill-color": "#fbfbfd" } },
-            { id: "coast", type: "line", source: "land", paint: { "line-color": "#c3c7d6", "line-width": 0.7 } },
+            { id: "water", type: "background", paint: { "background-color": color("--sos-water") } },
+            { id: "land", type: "fill", source: "land", paint: { "fill-color": color("--sos-land") } },
+            { id: "coast", type: "line", source: "land", paint: { "line-color": color("--sos-coast"), "line-width": 0.7 } },
           ],
         },
         attributionControl: { customAttribution: attribution() },
@@ -118,10 +121,10 @@ export function EventMap({
         filter: ["has", "point_count"],
         // Larger groups read larger, in three steps.
         paint: {
-          "circle-color": "#1b2747",
+          "circle-color": color("--sos-navy"),
           "circle-opacity": 0.92,
           "circle-radius": ["step", ["get", "point_count"], 13, 10, 17, 50, 22],
-          "circle-stroke-color": "white",
+          "circle-stroke-color": color("--sos-white"),
           "circle-stroke-width": 2,
         },
       });
@@ -135,15 +138,15 @@ export function EventMap({
           "circle-color": [
             "match",
             ["get", "kind"],
-            "transfer", "#404d6d",
-            "medevac", "#17634a",
-            "incident", "#b7791f",
-            "shipwreck", "#9f2534",
-            "dead_missing", "#1b2747",
-            "#2563a8",
+            "transfer", color("--sos-kind-transfer"),
+            "medevac", color("--sos-kind-medevac"),
+            "incident", color("--sos-kind-incident"),
+            "shipwreck", color("--sos-kind-shipwreck"),
+            "dead_missing", color("--sos-kind-dead-missing"),
+            color("--sos-kind-rescue"),
           ],
           "circle-radius": 6,
-          "circle-stroke-color": "white",
+          "circle-stroke-color": color("--sos-white"),
           "circle-stroke-width": 2,
         },
       });
@@ -153,13 +156,13 @@ export function EventMap({
         id: "active-halo",
         type: "circle",
         source: "active",
-        paint: { "circle-color": "rgba(232, 62, 27, 0.22)", "circle-radius": 22, "circle-blur": 0.15 },
+        paint: { "circle-color": color("--sos-selected-map-halo"), "circle-radius": 22, "circle-blur": 0.15 },
       });
       instance.addLayer({
         id: "active",
         type: "circle",
         source: "active",
-        paint: { "circle-color": "#e83e1b", "circle-radius": 9, "circle-stroke-color": "white", "circle-stroke-width": 3 },
+        paint: { "circle-color": color("--sos-orange"), "circle-radius": 9, "circle-stroke-color": color("--sos-white"), "circle-stroke-width": 3 },
       });
       instance.on("click", "events", (e) => {
         const id = e.features?.[0]?.properties?.id;
@@ -169,7 +172,8 @@ export function EventMap({
         const feature = e.features?.[0];
         if (feature?.geometry.type === "Point") {
           const [lon, lat] = feature.geometry.coordinates;
-          instance.easeTo({ center: [lon ?? 15, lat ?? 35], zoom: Math.min(instance.getZoom() + 2, 10) });
+          const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+          instance.easeTo({ center: [lon ?? 15, lat ?? 35], zoom: Math.min(instance.getZoom() + 2, 10), duration: reduce ? 0 : 500 });
         }
       });
       instance.on("mouseenter", "events", () => {
