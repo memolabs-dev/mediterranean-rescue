@@ -1,34 +1,40 @@
-# Mediterranean Rescue — full documentation for AI assistants
+# Mediterranean Rescue, full version
 
-https://rescue.memolabs.dev
+> Rescue operations at sea in the central Mediterranean, documented with their source. Site: https://rescue.memolabs.dev . Code: https://github.com/memolabs-dev/mediterranean-rescue (MIT). An independent volunteer project, started from the public Data for Good repository dataforgoodfr/mediterranean-rescue. It is not the official website of SOS MEDITERRANEE; the association's reference map is https://map.sosmediterranee.org.
 
-Rescue operations at sea, documented with their source. Mediterranean Rescue brings the public records of SOS MEDITERRANEE together on one map: the spreadsheet behind the association's own map, and the operations its crew keeps writing in the public logbook after that spreadsheet stopped (February 2024). Volunteers check each logbook operation against its sentence before it is published, and can hand the checked rows back in the spreadsheet's own columns. Two rows stay out: medical evacuations or rows without a number of people, which the SOS sheet does not hold.
+## Why it exists
+
+SOS MEDITERRANEE's public map reads a Google Sheet whose last operation dates from February 2024. Since then, the crew has kept describing each rotation in the public logbook of sosmediterranee.org, as free text. This project reads both records, turns the logbook sentences into rows in the spreadsheet's own columns, and asks a volunteer to check each row against its sentence before anything is published. Totals rebuilt this way match the association's 2024 and 2025 annual reports.
 
 ## Public site
-Home page (`/`) shows a map, a feed and a month-by-month view of the published operations, each with its source and evidence. English and French. About page (`/about`) describes the project, its data sources and its figures (how far the SOS sheet lags, what was rebuilt, what is verified).
 
-## Team space (`/workspace`)
-A workstation for volunteers. Every decision is recorded with its author, date and reason.
-- `/workspace` — Team home
-- `/workspace/data` — Latest data preview and team feed (Explore audience=team). Logbook card shows how far the sheet lags (2 people to reconcile as of Oct 2026), sync status, figures check per year.
-- `/workspace/review` — Verify each operation against its logbook sentence. 69 operations waiting (as of Oct 2026), 35 carry a note on what to look at.
-- `/workspace/imports` — Staged imports from Google Sheets tabs, read every five minutes.
-- `/workspace/ports` — Match port names.
-- `/workspace/publish` — Send verified operations to SOS MEDITERRANEE in the sheet's own columns.
-- `/workspace/history` — Who decided what and why.
-- `/workspace/team` — Team members and roles (groups: Verify events, Prepare events).
-- `/workspace/practice` — Practise on invented operations (fictitious data).
-- `/workspace/help` — Help.
-- `/invite` — Single-use invitation links for volunteers.
+- `/`: map, feed and month-by-month view of the published operations, each with its source and evidence. English and French (language switch in the header).
+- `/about`: where each figure comes from, how far the spreadsheet lags, what was rebuilt and what is verified.
+
+## Public API (read only, no key)
+
+- `GET /api/v1/events/`: published operations (kind, date, people, women, minors, position, port, vessel, voyage, source URL), paginated, with `total_count`.
+- `GET /api/v1/events/{id}/` and `/api/v1/events/{id}/evidence/`: one operation and the evidence it rests on.
+- `GET /api/v1/map-points/`, `GET /api/v1/timeline/`.
+- `GET /api/v1/schema/`: the OpenAPI contract (also in contracts/openapi.yaml).
+
+## Team space (`/workspace`, sign-in required, not indexed)
+
+A workstation for invited volunteers. Every decision is recorded with its author, date and reason.
+- Review: verify each logbook operation against the sentence it was read from.
+- Imports and ports: staged rows from the spreadsheet tabs, port names matched once.
+- Publish: two steps take a verified operation to this project's public site, each with a reason.
+- Data: export the checked rows in the spreadsheet's own columns, for the person who keeps the spreadsheet.
+- History, team, help, and a practice mode on invented operations.
+Volunteers join through a single-use invitation link (`/invite`).
 
 ## Data rules
-- Unknown stays null, never zero. No identity, position or count is invented.
-- Imports create staging or drafts, never publications.
-- Never commit real source data. Real exports live only under data/local/ (ignored by Git).
+
+- Unknown stays empty, never zero. No identity, position or count is invented.
+- Counts are per event, not unique people, and are not independently confirmed.
+- Readers stage rows privately: the spreadsheet every five minutes, the logbook every six hours. Nothing is linked, drafted or published automatically.
+- Publication needs a person with the publish role, a reason, and a recorded source agreement. Real exports never enter the repository; tests use fictitious data.
 
 ## Stack
-Backend: Django 5.2 LTS, Django REST Framework, drf-spectacular (OpenAPI contract in contracts/openapi.yaml), PostgreSQL 17 with PostGIS. Two scheduled readers: Google Sheets tabs every 5 minutes, public logbook every 6 hours.
-Frontend: React 19 with the React Compiler, Base UI, MapLibre, TanStack Query. One production image serves the API and the built frontend.
 
-## Repository
-Public at memolabs-dev/mediterranean-rescue. Demo at https://rescue.memolabs.dev.
+Django 5.2 LTS, Django REST Framework, drf-spectacular, PostgreSQL 17 with PostGIS. React 19 with the React Compiler, Base UI, MapLibre, TanStack Query. One production image serves the API and the built frontend; every green commit on main is deployed.

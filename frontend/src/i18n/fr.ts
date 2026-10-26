@@ -16,7 +16,7 @@ export const fr: Messages = {
   "app.footer.sosMap": "Consulter la carte SOS MEDITERRANEE existante ↗",
   "app.language": "Langue",
   "app.documentTitle": "Mediterranean Rescue",
-  "app.metaDescription": "Explorer les opérations de sauvetage en mer et leurs sources.",
+  "app.metaDescription": "Opérations de sauvetage en mer et leurs sources. Projet bénévole indépendant, distinct du site officiel de SOS MEDITERRANEE.",
 
   "filters.from": "Du",
   "filters.to": "Au",
@@ -701,7 +701,7 @@ export const fr: Messages = {
   "about.eyebrow": "Pour commencer",
   "about.title": "À propos des données",
   "about.lead": "Ce site bénévole indépendant documente les opérations en mer à partir des relevés publics de SOS MEDITERRANEE. Ce n’est pas le site de l’association. Chaque événement publié est accompagné de sa source et d’une décision de publication consignée.",
-  "about.independent": "Projet indépendant mené par des bénévoles avec Data for Good. Ce n’est pas le site officiel de SOS MEDITERRANEE.",
+  "about.independent": "Projet bénévole indépendant, parti d’un dépôt public de Data for Good. Ce n’est pas le site officiel de SOS MEDITERRANEE.",
   "about.sosSite": "Voir le site de SOS MEDITERRANEE ↗",
   "about.toMap": "Explorer la carte",
   "about.know.title": "Ce qu’il faut savoir",
