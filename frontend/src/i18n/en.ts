@@ -15,7 +15,7 @@ export const en = {
   "app.footer.sosMap": "Open the existing SOS MEDITERRANEE map ↗",
   "app.language": "Language",
   "app.documentTitle": "Mediterranean Rescue",
-  "app.metaDescription": "Explore rescue operations at sea and their sources.",
+  "app.metaDescription": "Rescue operations at sea and their sources. An independent volunteer project, not the official SOS MEDITERRANEE website.",
 
   "filters.from": "From",
   "filters.to": "To",
