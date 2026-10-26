@@ -115,7 +115,10 @@ if FRONTEND_DIST:
     WHITENOISE_INDEX_FILE = True
     # Vite names every built asset after its content: cache them for good.
     WHITENOISE_IMMUTABLE_FILE_TEST = lambda path, url: url.startswith("/assets/")  # noqa: E731
-    WHITENOISE_MIMETYPES = {".geojson": "application/geo+json", ".webmanifest": "application/manifest+json"}
+    WHITENOISE_MIMETYPES = {
+        ".geojson": "application/geo+json",
+        ".webmanifest": "application/manifest+json",
+    }
 
     def WHITENOISE_ADD_HEADERS_FUNCTION(headers, path, url):  # noqa: N802
         # The page names the hashed assets of its release: never serve a stale one.
