@@ -1,28 +1,25 @@
 # Mediterranean Rescue
 
-https://rescue.memolabs.dev
+> Rescue operations at sea in the central Mediterranean, documented with their source. An independent volunteer project, started from a public Data for Good repository. It is not the official website of SOS MEDITERRANEE; the association's reference map is https://map.sosmediterranee.org.
 
-Rescue operations at sea, documented with their source. Mediterranean Rescue brings the public records of SOS MEDITERRANEE together on one map: the spreadsheet behind the association's own map, and the operations its crew keeps writing in the public logbook after that spreadsheet stopped (February 2024). Volunteers check each logbook operation against its sentence before it is published.
+The site brings together two public records of SOS MEDITERRANEE: the spreadsheet behind the association's own map (last row February 2024), and the operations its crew keeps writing in the public logbook since then. A volunteer checks each logbook operation against the sentence it was read from before it is published. Counts are per event, not unique people, and are not independently confirmed. Unknown values stay empty, never zero. Code under the MIT licence.
 
 ## Public pages
-- / — Public site: map, feed and month-by-month view of published operations, each with its source and evidence. English and French.
-- /about — About the project, its data sources and its figures.
-- /invite — Single-use invitation links for volunteers.
 
-## Team space (requires sign-in)
-- /workspace — Team home
-- /workspace/data — Latest data preview and team feed
-- /workspace/review — Verify operations against logbook sentences
-- /workspace/imports — Staged imports from Google Sheets
-- /workspace/ports — Match port names
-- /workspace/publish — Send verified rows to SOS MEDITERRANEE
-- /workspace/history — Decision history
-- /workspace/team — Team members and roles
-- /workspace/practice — Practise on invented operations
-- /workspace/help — Help
+- [Explore](https://rescue.memolabs.dev/): map, feed and month-by-month view of the published operations, each with its source and evidence. English and French.
+- [About the data](https://rescue.memolabs.dev/about): where each figure comes from, what was rebuilt from the logbook and what is still to verify.
 
-## Stack
-Django 5.2 LTS, Django REST Framework and drf-spectacular (OpenAPI contract) on PostgreSQL 17 with PostGIS. React 19 with the React Compiler, Base UI, MapLibre and TanStack Query.
+## Public API (read only, no key)
 
-## Demo
-https://rescue.memolabs.dev
+- [Events](https://rescue.memolabs.dev/api/v1/events/): published operations with kind, date, people, position, port, vessel and source URL.
+- [Map points](https://rescue.memolabs.dev/api/v1/map-points/) and [timeline](https://rescue.memolabs.dev/api/v1/timeline/).
+- [OpenAPI schema](https://rescue.memolabs.dev/api/v1/schema/).
+
+## Project
+
+- [Source code](https://github.com/memolabs-dev/mediterranean-rescue): Django 5.2, PostgreSQL with PostGIS, React 19, MapLibre.
+- [Decision records](https://github.com/memolabs-dev/mediterranean-rescue/tree/main/docs/decisions) (French).
+
+## Optional
+
+- [Full version](https://rescue.memolabs.dev/llms-full.txt): data rules, the team space and how publication works.

@@ -701,7 +701,7 @@ export const fr: Messages = {
   "about.eyebrow": "Pour commencer",
   "about.title": "À propos des données",
   "about.lead": "Ce site bénévole et indépendant montre des événements en mer enregistrés par les équipes de SOS MEDITERRANEE, une association de recherche et de sauvetage en Méditerranée centrale. Ce n’est pas le site de l’association. Les événements viennent de deux relevés publics de l’association : le tableur de sa propre carte et son journal de bord. Une personne de ce projet décide, avec un motif, de ce qui est publié.",
-  "about.independent": "Projet indépendant mené par des bénévoles avec Data for Good. Ce n’est pas le site officiel de SOS MEDITERRANEE.",
+  "about.independent": "Projet bénévole indépendant, parti d’un dépôt public de Data for Good. Ce n’est pas le site officiel de SOS MEDITERRANEE.",
   "about.sosSite": "Voir le site de SOS MEDITERRANEE ↗",
   "about.toMap": "Explorer la carte",
   "about.know.title": "Ce qu’il faut savoir",

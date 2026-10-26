@@ -698,7 +698,7 @@ export const en = {
   "about.eyebrow": "Start here",
   "about.title": "About the data",
   "about.lead": "This independent volunteer site shows events at sea recorded by the teams of SOS MEDITERRANEE, a search and rescue organisation working in the central Mediterranean. It is not the association’s site. Events come from two public records of the association: the spreadsheet behind its own map, and its logbook. A person of this project decides, with a reason, what is published.",
-  "about.independent": "Independent project built by volunteers with Data for Good. It is not the official website of SOS MEDITERRANEE.",
+  "about.independent": "Independent volunteer project, started from a public Data for Good repository. It is not the official website of SOS MEDITERRANEE.",
   "about.sosSite": "Visit the SOS MEDITERRANEE website ↗",
   "about.toMap": "Explore the map",
   "about.know.title": "What you should know",

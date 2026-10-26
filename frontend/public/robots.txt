@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /workspace
+Disallow: /invite
+Disallow: /admin/
+Disallow: /api/private/
 
 Sitemap: https://rescue.memolabs.dev/sitemap.xml
