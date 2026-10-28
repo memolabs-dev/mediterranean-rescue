@@ -16,7 +16,9 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         # About 45 pages per reading at one per second: every few hours is plenty.
         parser.add_argument("--every", type=int, default=0, help="Repeat every N seconds (0: once)")
-        parser.add_argument("--json", dest="json_output", action="store_true", help="Privacy-safe JSON lines")
+        parser.add_argument(
+            "--json", dest="json_output", action="store_true", help="Privacy-safe JSON lines"
+        )
 
     def handle(self, *args, every, json_output=False, **options):
         while True:

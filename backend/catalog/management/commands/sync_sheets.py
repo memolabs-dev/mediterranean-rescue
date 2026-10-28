@@ -22,7 +22,9 @@ class Command(BaseCommand):
             help="JSON file: source key and tab URLs",
         )
         parser.add_argument("--every", type=int, default=0, help="Repeat every N seconds (0: once)")
-        parser.add_argument("--json", dest="json_output", action="store_true", help="Privacy-safe JSON lines")
+        parser.add_argument(
+            "--json", dest="json_output", action="store_true", help="Privacy-safe JSON lines"
+        )
 
     def handle(self, *args, config, every, json_output=False, **options):
         if not config:
