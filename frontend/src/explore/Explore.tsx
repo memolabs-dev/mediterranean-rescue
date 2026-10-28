@@ -1,24 +1,26 @@
 import { Button as BaseButton } from "@base-ui/react/button";
-import { lazy, Suspense, useEffect, useRef, useState, type FocusEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import { keepPreviousData } from "@tanstack/react-query";
 import { api, type Kind } from "../api/client";
 import { kinds } from "../filters";
 import { useI18n } from "../i18n/I18nProvider";
 import { changeQuery, Link, useLocation } from "../router";
-import { formatPosition } from "../shared/geo";
 import { useDesktopViewport } from "../shared/viewport";
 import { Icon } from "../ui/Icon";
-import { PreviewBody, PublicBody } from "./EventBody";
 import { fromNewsSite, missionName } from "./Evidence";
-import { kindLabel, kindName, peopleText, type Key } from "./labels";
+import { kindLabel } from "./labels";
 import { Logbook } from "./Logbook";
 import { MapPeek } from "./MapPeek";
-import { MiniMap, MiniMapDefinitions } from "./MiniMap";
+import { MiniMapDefinitions } from "./MiniMap";
 import { PublicBar } from "./PublicBar";
 import { Welcome } from "./Welcome";
 import { Timeline } from "./Timeline";
+import { EventCard, PinnedCard } from "./EventCards";
+import { MapPanel } from "./MapPanel";
+import { useDebounced, useHeight } from "./hooks";
+import { eventParam, motion, revealFocused } from "./navigation";
+import type { FeedItem, Status } from "./types";
 
-const EventMap = lazy(async () => ({ default: (await import("../components/Map")).EventMap }));
 const PAGE = 25;
 const LOGBOOK_SOURCE = "sos-logbook";
 // Three ways to read the same events.
@@ -28,44 +30,6 @@ const VIEWS: readonly { value: View; icon: "map" | "calendar" | "anchor" }[] = [
   { value: "logbook", icon: "calendar" },
   { value: "timeline", icon: "map" },
 ];
-type Status = "to_review" | "blocked" | "linked";
-
-/** One feed entry, from a published event or from a row of the private export. */
-interface FeedItem {
-  id: string;
-  date: string | null;
-  kind: string | null;
-  people: number | null;
-  port: string | null;
-  position: { longitude: number; latitude: number } | null;
-  title: string | null;
-  status: Status | null;
-  line: number | null;
-  /** Where the record comes from, shown on the closed card: the source, or the export row. */
-  origin: string;
-}
-
-function useDebounced<T>(value: T, delay: number) {
-  const [current, setCurrent] = useState(value);
-  useEffect(() => {
-    const timer = window.setTimeout(() => setCurrent(value), delay);
-    return () => window.clearTimeout(timer);
-  }, [value, delay]);
-  return current;
-}
-
-/** Height of an element, kept current while it resizes; 0 when there is none. */
-function useHeight(element: HTMLElement | null) {
-  const [height, setHeight] = useState(0);
-  useEffect(() => {
-    if (!element || typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(([entry]) => setHeight(Math.round(entry?.borderBoxSize[0]?.blockSize ?? element.offsetHeight)));
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [element]);
-  return element ? height : 0;
-}
-
 // The same reading screen for two audiences, never mixed: "public" shows only published events;
 // "team" (inside the team space) shows the latest data received, with its review state.
 export function Explore({ audience = "public" }: { audience?: "public" | "team" }) {
@@ -618,190 +582,3 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
   );
 }
 
-function MapPanel({
-  points,
-  activeId,
-  focusId,
-  followId,
-  onSelect,
-  truncated,
-  insetBottom = 0,
-}: {
-  points: { id: string; longitude: number; latitude: number; kind: Kind }[];
-  activeId: string | null;
-  focusId: string | null;
-  followId: string | null;
-  onSelect: (id: string) => void;
-  truncated: boolean;
-  insetBottom?: number;
-}) {
-  const { t } = useI18n();
-  const placeholder = useRef<HTMLDivElement>(null);
-  // Do not download MapLibre, its worker or coastline for an off-screen mobile map.
-  const [nearby, setNearby] = useState(() => typeof IntersectionObserver === "undefined");
-  useEffect(() => {
-    if (nearby || !placeholder.current || typeof IntersectionObserver === "undefined") return;
-    const observer = new IntersectionObserver(
-      (entries) => { if (entries.some((entry) => entry.isIntersecting)) setNearby(true); },
-      { rootMargin: "180px" },
-    );
-    observer.observe(placeholder.current);
-    return () => observer.disconnect();
-  }, [nearby]);
-  return (
-    <div className="map-card" ref={placeholder}>
-      {nearby ? (
-        <Suspense fallback={<div className="map-card__loading">{t("map.loading")}</div>}>
-          <EventMap points={points} onSelect={onSelect} activeId={activeId} focusId={focusId} followId={followId} insetBottom={insetBottom} />
-        </Suspense>
-      ) : (
-        <div className="map-card__loading" role="status">{t("map.loading")}</div>
-      )}
-      {truncated && <p className="map-card__note">{t("map.truncated")}</p>}
-    </div>
-  );
-}
-
-// Short labels for the card badge; the full sentence stays in the opened record.
-function statusKey(status: Status): Key {
-  return `explore.status.${status}` as Key;
-}
-
-function EventCard({
-  item,
-  preview,
-  open,
-  onToggle,
-  onHover,
-}: {
-  item: FeedItem;
-  preview: boolean;
-  open: boolean;
-  onToggle: () => void;
-  onHover: (hovered: boolean) => void;
-}) {
-  const i18n = useI18n();
-  const { t } = i18n;
-  const ref = useRef<HTMLLIElement>(null);
-  const bodyId = `event-${item.id}-body`;
-  return (
-    <li
-      id={`event-${item.id}`}
-      ref={ref}
-      className={`card${open ? " card--open" : ""}`}
-      data-kind={item.kind ?? undefined}
-      onPointerEnter={(event) => event.pointerType === "mouse" && onHover(true)}
-      onPointerLeave={(event) => event.pointerType === "mouse" && onHover(false)}
-    >
-      <BaseButton className="card__summary" aria-expanded={open} aria-controls={bodyId} onClick={onToggle}>
-        <span className="card__text">
-          <span className="card__top">
-            <span className="card__date">{item.date ? i18n.date(item.date) : t("review.unknown")}</span>
-            {item.status && (
-              <span className={`status status--${item.status}`}>
-                <i aria-hidden="true" />
-                {t(statusKey(item.status))}
-              </span>
-            )}
-          </span>
-          <span className="card__kind">
-            <i className="card__kind-dot" aria-hidden="true" />
-            {kindName(i18n, item.kind)}
-          </span>
-          <span className="card__facts">
-            <span className="card__people">
-              <Icon name="people" size={17} />
-              {peopleText(i18n, item.kind, item.people)}
-            </span>
-            {item.port && (
-              <span className="card__port">
-                <Icon name="anchor" size={16} />
-                {item.port}
-              </span>
-            )}
-          </span>
-          <span className="card__origin">{item.origin}</span>
-        </span>
-        <span className="card__locator">
-          <MiniMap
-            position={item.position}
-            label={item.position ? formatPosition(i18n, item.position.latitude, item.position.longitude) : t("map.unknownPosition")}
-            unknownLabel={t("map.unknownPosition")}
-          />
-        </span>
-        <Icon name="chevronDown" className="card__chevron" />
-      </BaseButton>
-      <div id={bodyId} className="card__body" role="region" aria-label={t("detail.title")} hidden={!open}>
-        {open && (
-          <>
-            {preview ? <PreviewBody id={item.id} /> : <PublicBody id={item.id} />}
-            <CopyLink id={item.id} />
-          </>
-        )}
-      </div>
-    </li>
-  );
-}
-
-function PinnedCard({ id, from, preview, onClose }: { id: string; from: "link" | "map"; preview: boolean; onClose: () => void }) {
-  const { t } = useI18n();
-  return (
-    <div className="card card--open card--pinned">
-      <div className="card__pinned-head">
-        <span>
-          <Icon name={from === "map" ? "pin" : "link"} size={16} /> {t(from === "map" ? "explore.fromMap" : "explore.fromLink")}
-        </span>
-        <BaseButton className="icon-button" aria-label={t("ui.close")} onClick={onClose}>
-          <Icon name="close" size={18} />
-        </BaseButton>
-      </div>
-      <div className="card__body">
-        {preview ? <PreviewBody id={id} /> : <PublicBody id={id} />}
-        <CopyLink id={id} />
-      </div>
-    </div>
-  );
-}
-
-/** Smooth scrolling unless the reader asked the system to reduce motion. */
-function motion(): ScrollBehavior {
-  return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
-}
-
-/** A control reached with the keyboard in a strip that scrolls sideways is brought out from
- * under the edge fade (acceptance of 25 October 2026, D-B). */
-function revealFocused(event: FocusEvent<HTMLElement>) {
-  event.target.scrollIntoView?.({ block: "nearest", inline: "nearest" });
-}
-
-/** Record ids are UUIDs; anything else in the address is ignored rather than requested. */
-function eventParam(value: string | null) {
-  return value && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value) ? value.toLowerCase() : null;
-}
-
-// The address of one record, to share or cite. Without clipboard access the link is shown instead.
-function CopyLink({ id }: { id: string }) {
-  const { t } = useI18n();
-  const [state, setState] = useState<"idle" | "copied" | "shown">("idle");
-  const url = `${window.location.origin}${window.location.pathname}?event=${id}`;
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(url);
-      setState("copied");
-    } catch {
-      setState("shown");
-    }
-  };
-  return (
-    <p className="card__link">
-      <BaseButton className="link-button" onClick={() => void copy()}>
-        <Icon name="link" size={16} />
-        {t("explore.copyLink")}
-      </BaseButton>
-      <span role="status">
-        {state === "copied" && t("explore.linkCopied")}
-        {state === "shown" && <a href={url}>{url}</a>}
-      </span>
-    </p>
-  );
-}
