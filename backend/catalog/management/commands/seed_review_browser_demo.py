@@ -74,16 +74,12 @@ class Command(BaseCommand):
                 username=username,
                 defaults={"is_active": True},
             )
-            if not created and (
-                user.is_staff or user.is_superuser or not user.is_active
-            ):
+            if not created and (user.is_staff or user.is_superuser or not user.is_active):
                 raise CommandError("Refused: a reserved test username is occupied")
             user.set_password(password)
             user.save(update_fields=["password"])
             user.user_permissions.set(
-                Permission.objects.filter(
-                    content_type__app_label="catalog", codename__in=codenames
-                )
+                Permission.objects.filter(content_type__app_label="catalog", codename__in=codenames)
             )
             users[username] = user
 
