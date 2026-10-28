@@ -161,7 +161,7 @@ jobs:
           import secrets
           password = secrets.token_urlsafe(36)
           with open("deploy/.env", "a", encoding="utf-8") as file:
-              file.write(f"\nRESCUE_REVIEW_DEMO_PASSWORD={password}\n")
+              file.write(f"\nRESCUE_REVIEW_DEMO_PASSWORD={password}\nSIGN_IN_RATE=100/min\n")
           with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as file:
               file.write(f"RESCUE_REVIEW_DEMO_PASSWORD={password}\n")
           PY
@@ -172,7 +172,8 @@ jobs:
         env:
           E2E_REVIEW_DEMO: '1'
           E2E_BASE_URL: http://127.0.0.1:8000
-          E2E_FORWARDED_PROTO: https
+          # This throwaway server runs in DEBUG over plain HTTP; claiming forwarded TLS
+          # would make Django's strict Origin/CSRF checks correctly reject this test login.
         run: pnpm exec playwright test e2e/reviewer-journey.e2e.ts
       - uses: actions/upload-artifact@v7
         if: failure()
