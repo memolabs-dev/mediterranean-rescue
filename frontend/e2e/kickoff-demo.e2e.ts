@@ -39,6 +39,12 @@ test.describe("fictional kickoff walkthrough", () => {
       await page.locator(".explore-map--inline").scrollIntoViewIfNeeded();
     }
     await page.waitForLoadState("networkidle");
+    // An API point alone proves nothing about whether MapLibre actually painted it.
+    await expect(page.locator(".map[role=region]").first()).toHaveAttribute(
+      "data-rendered-markers",
+      "1",
+      { timeout: 10_000 },
+    );
     await page.waitForTimeout(900);
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({ path: testInfo.outputPath("kickoff-fictional-map.png"), fullPage: true });
