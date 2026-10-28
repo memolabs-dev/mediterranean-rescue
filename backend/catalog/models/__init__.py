@@ -5,8 +5,8 @@ all historical migration names and default catalog_* table names unchanged.
 Do not change a model class name or its app label without a reviewed migration plan.
 """
 
+from .accounts import Invitation
 from .base import UUIDModel
-from .sources import Source
 from .events import Event, EventKind, EventQuerySet, EventRevision, Evidence, Vessel, Voyage
 from .geography import Port, PortAlias, PortAliasPort
 from .ingestion import (
@@ -21,7 +21,7 @@ from .ingestion import (
     StagedRecord,
 )
 from .publication import PublicationAudit
-from .accounts import Invitation
+from .sources import Source
 
 __all__ = [
     "UUIDModel",
