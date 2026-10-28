@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
+
 from .base import UUIDModel
 
 
