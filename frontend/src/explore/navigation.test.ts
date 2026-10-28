@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { eventParam, motion } from "./navigation";
 
 describe("explore navigation boundary", () => {
@@ -10,9 +10,11 @@ describe("explore navigation boundary", () => {
   });
 
   it("honors reduced motion for keyboard and scroll navigation", () => {
-    const original = window.matchMedia;
-    window.matchMedia = () => ({ matches: true }) as MediaQueryList;
-    try { expect(motion()).toBe("auto"); }
-    finally { window.matchMedia = original; }
+    vi.stubGlobal("window", { matchMedia: () => ({ matches: true }) });
+    try {
+      expect(motion()).toBe("auto");
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });
