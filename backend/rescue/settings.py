@@ -31,6 +31,8 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "catalog",
 ]
+
+
 # Public map consumers may be hosted by the partner on another origin.
 # These origins receive READ-ONLY public API responses; no private API, cookies,
 # cross-origin sign-in or publication rights are exposed.
@@ -54,11 +56,14 @@ def _public_frontend_origins():
             or parsed.password is not None
             or origin != f"{parsed.scheme}://{parsed.netloc}"
             or parsed_port == 0
-            or (parsed.scheme == "http" and not (
-                DEBUG and parsed.hostname in {"localhost", "127.0.0.1", "::1"}
-            ))
+            or (
+                parsed.scheme == "http"
+                and not (DEBUG and parsed.hostname in {"localhost", "127.0.0.1", "::1"})
+            )
         ):
-            raise ImproperlyConfigured("PUBLIC_FRONTEND_ORIGINS must contain exact HTTPS origins (HTTP loopback only in development)")
+            raise ImproperlyConfigured(
+                "PUBLIC_FRONTEND_ORIGINS must contain exact HTTPS origins (HTTP loopback only in development)"
+            )
         result.add(origin)
     return frozenset(result)
 

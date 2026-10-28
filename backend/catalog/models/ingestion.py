@@ -26,7 +26,9 @@ class ImportBatch(UUIDModel):
 
 
 class StagedRecord(UUIDModel):
-    batch = models.ForeignKey("catalog.ImportBatch", related_name="records", on_delete=models.CASCADE)
+    batch = models.ForeignKey(
+        "catalog.ImportBatch", related_name="records", on_delete=models.CASCADE
+    )
     ordinal = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     payload = models.JSONField()
 
@@ -36,6 +38,8 @@ class StagedRecord(UUIDModel):
         constraints = [
             models.UniqueConstraint(fields=["batch", "ordinal"], name="import_row_identity")
         ]
+
+
 SHEETS = [
     ("Data_operations", "Data_operations"),
     ("Other_data", "Other_data"),
@@ -46,7 +50,9 @@ SHEETS = [
 class SheetSnapshot(UUIDModel):
     """One diagnosed Sheets export in private staging; raw cells never leave it."""
 
-    source = models.ForeignKey("catalog.Source", on_delete=models.PROTECT, related_name="sheet_snapshots")
+    source = models.ForeignKey(
+        "catalog.Source", on_delete=models.PROTECT, related_name="sheet_snapshots"
+    )
     sheet = models.CharField(max_length=32, choices=SHEETS)
     sha256 = models.CharField(max_length=64)
     contract_version = models.CharField(max_length=40)
@@ -74,7 +80,9 @@ class SheetSnapshot(UUIDModel):
 class SheetSync(UUIDModel):
     """One scheduled reading of a Google Sheets tab and what it found (ADR 0012)."""
 
-    source = models.ForeignKey("catalog.Source", on_delete=models.PROTECT, related_name="sheet_syncs")
+    source = models.ForeignKey(
+        "catalog.Source", on_delete=models.PROTECT, related_name="sheet_syncs"
+    )
     sheet = models.CharField(max_length=32, choices=SHEETS)
     status = models.CharField(
         max_length=16,
@@ -86,7 +94,11 @@ class SheetSync(UUIDModel):
         ],
     )
     snapshot = models.ForeignKey(
-        "catalog.SheetSnapshot", on_delete=models.PROTECT, null=True, blank=True, related_name="syncs"
+        "catalog.SheetSnapshot",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="syncs",
     )
     sha256 = models.CharField(max_length=64, blank=True)
     # Counts only (to look at, unchanged, to fix); never source values.
@@ -103,7 +115,9 @@ class SheetSync(UUIDModel):
 
 
 class SheetRow(UUIDModel):
-    snapshot = models.ForeignKey("catalog.SheetSnapshot", on_delete=models.PROTECT, related_name="rows")
+    snapshot = models.ForeignKey(
+        "catalog.SheetSnapshot", on_delete=models.PROTECT, related_name="rows"
+    )
     line = models.PositiveIntegerField(validators=[MinValueValidator(2)])
     raw_cells = models.JSONField()
     candidate = models.JSONField(null=True, blank=True)
@@ -131,7 +145,9 @@ class LogbookEvidence(UUIDModel):
     """Where a row rebuilt from the public logbook comes from (ADR 0014): the page, the entry and
     a short quote, shown next to the row so a volunteer can check it against the source."""
 
-    row = models.OneToOneField("catalog.SheetRow", on_delete=models.CASCADE, related_name="logbook")
+    row = models.OneToOneField(
+        "catalog.SheetRow", on_delete=models.CASCADE, related_name="logbook"
+    )
     source_url = models.URLField(max_length=1000)
     rotation = models.CharField(max_length=200)
     logged_at = models.CharField(max_length=40, help_text="Day and time of the logbook entry.")
@@ -149,7 +165,9 @@ class LogbookEvidence(UUIDModel):
 class SourceIdentity(UUIDModel):
     """Durable identity we assign to a source record; created only by human approval."""
 
-    source = models.ForeignKey("catalog.Source", on_delete=models.PROTECT, related_name="identities")
+    source = models.ForeignKey(
+        "catalog.Source", on_delete=models.PROTECT, related_name="identities"
+    )
     sheet = models.CharField(max_length=32, choices=SHEETS)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="+"
@@ -157,7 +175,11 @@ class SourceIdentity(UUIDModel):
     reason = models.TextField()
     # Draft event created from this identity (ADR 0006); never overwritten once set.
     event = models.OneToOneField(
-        "catalog.Event", null=True, blank=True, on_delete=models.PROTECT, related_name="source_identity"
+        "catalog.Event",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name="source_identity",
     )
     drafted_from = models.ForeignKey(
         "SheetRow", null=True, blank=True, on_delete=models.PROTECT, related_name="+"
@@ -211,10 +233,16 @@ class SourceIdentity(UUIDModel):
 class RowIdentityLink(UUIDModel):
     """Approved decision that a snapshot row describes a source identity."""
 
-    row = models.OneToOneField("catalog.SheetRow", on_delete=models.PROTECT, related_name="identity_link")
+    row = models.OneToOneField(
+        "catalog.SheetRow", on_delete=models.PROTECT, related_name="identity_link"
+    )
     # Copy of row.snapshot so the database can refuse one identity twice in a snapshot.
-    snapshot = models.ForeignKey("catalog.SheetSnapshot", on_delete=models.PROTECT, related_name="+")
-    identity = models.ForeignKey("catalog.SourceIdentity", on_delete=models.PROTECT, related_name="links")
+    snapshot = models.ForeignKey(
+        "catalog.SheetSnapshot", on_delete=models.PROTECT, related_name="+"
+    )
+    identity = models.ForeignKey(
+        "catalog.SourceIdentity", on_delete=models.PROTECT, related_name="links"
+    )
     match = models.CharField(
         max_length=16,
         choices=[

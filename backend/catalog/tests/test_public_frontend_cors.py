@@ -23,9 +23,7 @@ class ExternalFrontendTests(SimpleTestCase):
         self.assertNotIn("Access-Control-Allow-Credentials", response)
 
     def test_untrusted_origin_never_receives_cors(self):
-        response = self.client.get(
-            "/api/v1/events/", HTTP_ORIGIN="https://untrusted.example"
-        )
+        response = self.client.get("/api/v1/events/", HTTP_ORIGIN="https://untrusted.example")
         self.assertNotIn("Access-Control-Allow-Origin", response)
 
     def test_allowed_read_only_preflight(self):

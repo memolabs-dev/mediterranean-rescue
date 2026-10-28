@@ -28,6 +28,8 @@ class Port(UUIDModel):
 
     def __str__(self):
         return self.name
+
+
 class PortAlias(UUIDModel):
     """Approved reading of an exact source port label.
 
@@ -35,7 +37,9 @@ class PortAlias(UUIDModel):
     regions: a label maps to one or more ports, to a vessel, or is classified as not a port.
     """
 
-    source = models.ForeignKey("catalog.Source", on_delete=models.PROTECT, related_name="port_aliases")
+    source = models.ForeignKey(
+        "catalog.Source", on_delete=models.PROTECT, related_name="port_aliases"
+    )
     label = models.CharField(max_length=200)
     target = models.CharField(
         max_length=16,
@@ -49,7 +53,11 @@ class PortAlias(UUIDModel):
         "catalog.Port", blank=True, related_name="aliases", through="PortAliasPort"
     )
     vessel = models.ForeignKey(
-        "catalog.Vessel", null=True, blank=True, on_delete=models.PROTECT, related_name="port_aliases"
+        "catalog.Vessel",
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name="port_aliases",
     )
     approved_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="+"

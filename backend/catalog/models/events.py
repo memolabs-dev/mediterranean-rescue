@@ -18,6 +18,8 @@ class Vessel(UUIDModel):
 
     def __str__(self):
         return self.name
+
+
 class Voyage(UUIDModel):
     vessel = models.ForeignKey("catalog.Vessel", on_delete=models.PROTECT, related_name="voyages")
     title = models.CharField(max_length=200)
@@ -160,11 +162,15 @@ class Evidence(UUIDModel):
 
     def __str__(self):
         return self.label
+
+
 class EventRevision(UUIDModel):
     """Reviewed decision on a corrected source row for an existing draft (ADR 0007)."""
 
     event = models.ForeignKey("catalog.Event", on_delete=models.PROTECT, related_name="revisions")
-    identity = models.ForeignKey("catalog.SourceIdentity", on_delete=models.PROTECT, related_name="revisions")
+    identity = models.ForeignKey(
+        "catalog.SourceIdentity", on_delete=models.PROTECT, related_name="revisions"
+    )
     from_row = models.ForeignKey("catalog.SheetRow", on_delete=models.PROTECT, related_name="+")
     to_row = models.ForeignKey("catalog.SheetRow", on_delete=models.PROTECT, related_name="+")
     # {field: [value before, value after]} for the translated fields that differ.

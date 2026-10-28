@@ -27,7 +27,9 @@ class PublicFrontendCors:
 
         if request.method == "OPTIONS" and preflight_method:
             raw_headers = request.headers.get("Access-Control-Request-Headers", "")
-            headers = {header.strip().lower() for header in raw_headers.split(",") if header.strip()}
+            headers = {
+                header.strip().lower() for header in raw_headers.split(",") if header.strip()
+            }
             if (
                 not allowed
                 or preflight_method not in self.METHODS
