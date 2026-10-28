@@ -4,11 +4,11 @@ Prefer importing directly from catalog.review.crosswalk for new code.
 """
 
 from catalog.review.crosswalk import (
+    REVIEW_PERMISSION,
+    STAGE_PERMISSION,
     LinkProposal,
     PortLabel,
     PortProposal,
-    REVIEW_PERMISSION,
-    STAGE_PERMISSION,
     _check_label,
     _create_alias,
     _is_linkable,

@@ -10,8 +10,14 @@ from dataclasses import dataclass, field
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 
-from catalog.review.drafts import DRAFT_FIELDS, _counts_consistent, _draft_event, comparable_value, drafted_values
 from catalog.models import Event, EventRevision, SheetRow, SheetSnapshot, SourceIdentity
+from catalog.review.drafts import (
+    DRAFT_FIELDS,
+    _counts_consistent,
+    _draft_event,
+    comparable_value,
+    drafted_values,
+)
 
 REVISION_PERMISSION = "catalog.change_event"
 
