@@ -80,17 +80,14 @@ class Command(BaseCommand):
                 user.save(update_fields=["password"])
             user.user_permissions.add(
                 *[
-                    Permission.objects.get(
-                        content_type__app_label="catalog", codename=codename
-                    )
+                    Permission.objects.get(content_type__app_label="catalog", codename=codename)
                     for codename in codenames
                 ]
             )
             users[username] = model.objects.get(pk=user.pk)
 
         headers = [
-            column["name"]
-            for column in load_contract()["sheets"]["Data_operations"]["columns"]
+            column["name"] for column in load_contract()["sheets"]["Data_operations"]["columns"]
         ]
         cells = {
             "date": "17/01/2026",
