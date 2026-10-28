@@ -1,0 +1,62 @@
+[
+  {
+    "external_id": "fictional-rescue-001",
+    "kind": "rescue",
+    "occurred_on": "2026-01-12",
+    "title": "SYNTHETIC — Rescue drill A",
+    "source_url": "https://example.org/fictional/rescue-001",
+    "people": 18,
+    "longitude": 12.6,
+    "latitude": 35.1,
+    "location_precision": "reported",
+    "summary": "FICTIONAL TRAINING DATA. No actual SOS MEDITERRANEE event."
+  },
+  {
+    "external_id": "fictional-rescue-002",
+    "kind": "rescue",
+    "occurred_on": "2026-01-13",
+    "title": "SYNTHETIC — Rescue with unknown position",
+    "source_url": "https://example.org/fictional/rescue-002",
+    "people": null,
+    "longitude": null,
+    "latitude": null,
+    "location_precision": "unknown",
+    "summary": "FICTIONAL TRAINING DATA. Unknown is not zero; no map pin."
+  },
+  {
+    "external_id": "fictional-transfer-003",
+    "kind": "transfer",
+    "occurred_on": "2026-01-14",
+    "title": "SYNTHETIC — Transfer drill",
+    "source_url": "https://example.org/fictional/transfer-003",
+    "people": 6,
+    "longitude": 13.2,
+    "latitude": 34.9,
+    "location_precision": "approximate",
+    "summary": "FICTIONAL TRAINING DATA. Transfers must not be summed blindly with rescues."
+  },
+  {
+    "external_id": "fictional-medevac-004",
+    "kind": "medevac",
+    "occurred_on": "2026-01-15",
+    "title": "SYNTHETIC — Medical evacuation drill",
+    "source_url": "https://example.org/fictional/medevac-004",
+    "people": 1,
+    "longitude": 14.4,
+    "latitude": 35,
+    "location_precision": "reported",
+    "summary": "FICTIONAL TRAINING DATA. Not an actual rescue."
+  },
+  {
+    "external_id": "fictional-incident-005",
+    "kind": "incident",
+    "occurred_on": "2026-01-16",
+    "title": "SYNTHETIC — Incident with no people count",
+    "source_url": "https://example.org/fictional/incident-005",
+    "people": null,
+    "longitude": null,
+    "latitude": null,
+    "location_precision": "unknown",
+    "summary": "FICTIONAL TRAINING DATA. Incident type is distinct from rescue."
+  }
+]
