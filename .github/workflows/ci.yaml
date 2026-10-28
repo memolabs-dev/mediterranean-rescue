@@ -145,6 +145,31 @@ jobs:
           E2E_BASE_URL: http://127.0.0.1:8000
           E2E_FORWARDED_PROTO: https
         run: pnpm exec playwright test kickoff-
+      # A second fictional exercise signs in as separate reviewer and publisher.
+      # Credentials are generated for this job, masked, never stored in the repo or artifacts.
+      - name: Seed isolated, authenticated volunteer review
+        run: |
+          KICKOFF_PASSWORD=$(python3 -c 'import secrets; print(secrets.token_urlsafe(30))')
+          echo "::add-mask::$KICKOFF_PASSWORD"
+          printf '\nKICKOFF_REVIEW_PASSWORD=%s\n' "$KICKOFF_PASSWORD" >> deploy/.env
+          echo "E2E_REVIEW_PASSWORD=$KICKOFF_PASSWORD" >> "$GITHUB_ENV"
+          RESCUE_IMAGE=rescue:ci RESCUE_PORT=8000 docker compose -f deploy/compose.yaml --env-file deploy/.env up -d --force-recreate --wait web
+          RESCUE_IMAGE=rescue:ci RESCUE_PORT=8000 docker compose -f deploy/compose.yaml --env-file deploy/.env run --rm -T web seed_review_browser --confirm-local-training
+      - name: Prove signed-in volunteer decision and withdrawal
+        working-directory: frontend
+        env:
+          E2E_KICKOFF: '1'
+          E2E_BASE_URL: http://127.0.0.1:8000
+        # This is development mode over local HTTP. Sending a spoofed HTTPS proxy header
+        # with an HTTP Origin breaks Django's intended CSRF origin check on sign-in.
+        run: pnpm exec playwright test review-workflow
+      - uses: actions/upload-artifact@v7
+        if: success()
+        with:
+          name: fictional-volunteer-review-proof
+          path: frontend/test-results/**/fictional-volunteer-*.png
+          if-no-files-found: error
+          retention-days: 14
       - uses: actions/upload-artifact@v7
         if: success()
         with:
