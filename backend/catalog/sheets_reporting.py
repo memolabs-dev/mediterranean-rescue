@@ -267,5 +267,3 @@ def render_report(result, contract=None, language=DEFAULT_LANGUAGE):
         "",
     ]
     return "\n".join(lines)
-
-
