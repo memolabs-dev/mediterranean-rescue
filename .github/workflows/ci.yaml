@@ -130,6 +130,28 @@ jobs:
           E2E_BASE_URL: http://127.0.0.1:8000
           E2E_FORWARDED_PROTO: https
         run: pnpm e2e
+      # A separate training mode runs only inside this disposable CI runner, never in production.
+      # Reuse the already-built image and ephemeral DB after the normal production smoke suite.
+      - name: Seed fictional training database for browser proof
+        run: |
+          sed -i 's/^DATA_MODE=production$/DATA_MODE=training/' deploy/.env
+          printf '\nDJANGO_ENV=development\n' >> deploy/.env
+          RESCUE_IMAGE=rescue:ci RESCUE_PORT=8000 docker compose -f deploy/compose.yaml --env-file deploy/.env up -d --force-recreate --wait web
+          RESCUE_IMAGE=rescue:ci RESCUE_PORT=8000 docker compose -f deploy/compose.yaml --env-file deploy/.env run --rm -T web seed_kickoff_demo --confirm-local-training
+      - name: Verify fictional map and evidence in real browsers
+        working-directory: frontend
+        env:
+          E2E_KICKOFF: '1'
+          E2E_BASE_URL: http://127.0.0.1:8000
+          E2E_FORWARDED_PROTO: https
+        run: pnpm exec playwright test e2e/kickoff-demo.e2e.ts
+      - uses: actions/upload-artifact@v7
+        if: success()
+        with:
+          name: fictional-rescue-browser-proof
+          path: frontend/test-results/**/kickoff-fictional-*.png
+          if-no-files-found: error
+          retention-days: 14
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
