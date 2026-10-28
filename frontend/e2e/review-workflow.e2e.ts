@@ -84,7 +84,7 @@ test.describe("authenticated fictional review proof", () => {
     await decision.getByRole("checkbox", { name: /Rescue.*17.*2026/ }).check();
     await decision.getByRole("textbox", { name: "Reason" }).fill("Approved invented training publication");
     await decision.getByRole("button", { name: /Publish/ }).last().click();
-    await page.getByRole("dialog").getByRole("button", { name: /Publish/ }).click();
+    await page.getByRole("alertdialog").getByRole("button", { name: /Publish/ }).click();
     await expect.poll(async () => {
       const r = await page.request.get(`/api/v1/events/${event!.id}/`);
       return r.status();
@@ -95,7 +95,7 @@ test.describe("authenticated fictional review proof", () => {
     await decision.getByRole("checkbox", { name: /Rescue.*17.*2026/ }).check();
     await decision.getByRole("textbox", { name: "Reason" }).fill("Withdrawing invented training publication");
     await decision.getByRole("button", { name: /Withdraw/ }).last().click();
-    await page.getByRole("dialog").getByRole("button", { name: /Withdraw/ }).click();
+    await page.getByRole("alertdialog").getByRole("button", { name: /Withdraw/ }).click();
     await expect.poll(async () => {
       const r = await page.request.get(`/api/v1/events/${event!.id}/`);
       return r.status();
