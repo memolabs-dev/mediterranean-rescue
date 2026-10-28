@@ -27,6 +27,9 @@ test.describe("fictional kickoff walkthrough", () => {
 
     await page.goto("/");
     await expect(page.getByText("Training mode: every event and count shown is fictitious.")).toBeVisible();
+    if (testInfo.project.name === "phone") {
+      await page.getByRole("button", { name: "Read the three essential points" }).click();
+    }
     await expect(page.getByText(/These records and their example links are fictional test fixtures/)).toBeVisible();
     await expect(page.locator(".maplibregl-canvas").filter({ visible: true }).first()).toBeVisible();
     await expect(page.locator("li.card")).toHaveCount(2);
