@@ -119,8 +119,8 @@ class LogbookSyncTests(PrivateApiTestCase):
         self.assertEqual(records[0]["date"], "13/03/2025")
         self.assertEqual(records[0]["type_ops"], "Rescue")
         self.assertEqual(records[0]["nb_survivor"], "40")
-        self.assertEqual(records[0]["latitude"], "33.5")
-        self.assertEqual(records[0]["longitude"], "12.25")
+        self.assertEqual(records[0]["latitude"], "33° 30.00")
+        self.assertEqual(records[0]["longitude"], "12° 15.00")
 
         # Re-parse with the same observed contract used for incoming spreadsheets.
         parsed = diagnose(csv_bytes, "Data_operations")
