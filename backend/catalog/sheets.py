@@ -48,9 +48,6 @@ EXIT_IO = 1  # input refused or output impossible; see stderr
 EXIT_USAGE = 2  # argparse usage error
 EXIT_BLOCKED = 3  # package written, normalization blocked by errors
 
-
-
-
 __all__ = [
     "CONTRACT_PATH",
     "DIAGNOSTIC_FORMAT",
