@@ -55,7 +55,10 @@ class KickoffVerticalSliceTests(TestCase):
     def publish(self, external_id):
         event = Event.objects.get(source=self.source, external_id=external_id)
         return set_publication(
-            event_id=event.pk, actor=self.editor, publish=True, reason="Synthetic QA review"
+            event_id=event.pk,
+            actor=self.editor,
+            publish=True,
+            reason="Synthetic QA review",
         )
 
     def test_import_remains_private_until_review_and_is_idempotent(self):
@@ -64,7 +67,9 @@ class KickoffVerticalSliceTests(TestCase):
         self.assertTrue(created)
         self.assertEqual(StagedRecord.objects.filter(batch=batch).count(), 5)
         self.assertEqual(Event.objects.count(), 0)
-        self.assertEqual(self.client.get("/api/v1/events/", secure=True).json()["total_count"], 0)
+        self.assertEqual(
+            self.client.get("/api/v1/events/", secure=True).json()["total_count"], 0
+        )
 
         same_batch, created_again = stage_payload(source=self.source, content=payload)
         self.assertFalse(created_again)
@@ -74,7 +79,9 @@ class KickoffVerticalSliceTests(TestCase):
         self.assertEqual(apply_batch(batch_id=batch.pk), 5)
         self.assertEqual(apply_batch(batch_id=batch.pk), 0)
         self.assertEqual(Event.objects.filter(status="draft").count(), 5)
-        self.assertEqual(self.client.get("/api/v1/events/", secure=True).json()["total_count"], 0)
+        self.assertEqual(
+            self.client.get("/api/v1/events/", secure=True).json()["total_count"], 0
+        )
 
     def test_unknowns_are_not_invented_and_map_has_no_ghost_pin(self):
         self.stage_and_apply()
@@ -100,13 +107,19 @@ class KickoffVerticalSliceTests(TestCase):
 
         with self.assertRaises(PermissionDenied):
             set_publication(
-                event_id=event.pk, actor=self.visitor, publish=True, reason="Not authorized"
+                event_id=event.pk,
+                actor=self.visitor,
+                publish=True,
+                reason="Not authorized",
             )
         self.source.rights_approved = False
         self.source.save(update_fields=["rights_approved"])
         with self.assertRaises(ValidationError):
             set_publication(
-                event_id=event.pk, actor=self.editor, publish=True, reason="Not licensed"
+                event_id=event.pk,
+                actor=self.editor,
+                publish=True,
+                reason="Not licensed",
             )
         event.refresh_from_db()
         self.assertEqual(event.status, "draft")
@@ -147,20 +160,31 @@ class KickoffVerticalSliceTests(TestCase):
     def test_withdrawal_removes_the_public_event_and_keeps_audit(self):
         self.stage_and_apply()
         event = self.publish("fictional-rescue-001")
-        self.assertEqual(self.client.get("/api/v1/events/", secure=True).json()["total_count"], 1)
         self.assertEqual(
-            self.client.get("/api/v1/map-points/", secure=True).json()["located_count"], 1
+            self.client.get("/api/v1/events/", secure=True).json()["total_count"], 1
+        )
+        self.assertEqual(
+            self.client.get("/api/v1/map-points/", secure=True).json()["located_count"],
+            1,
         )
 
         set_publication(
-            event_id=event.pk, actor=self.editor, publish=False, reason="Synthetic QA withdrawal"
+            event_id=event.pk,
+            actor=self.editor,
+            publish=False,
+            reason="Synthetic QA withdrawal",
         )
-        self.assertEqual(self.client.get("/api/v1/events/", secure=True).json()["total_count"], 0)
         self.assertEqual(
-            self.client.get("/api/v1/map-points/", secure=True).json()["located_count"], 0
+            self.client.get("/api/v1/events/", secure=True).json()["total_count"], 0
         )
         self.assertEqual(
-            list(PublicationAudit.objects.filter(event=event).values_list("action", flat=True)),
+            self.client.get("/api/v1/map-points/", secure=True).json()["located_count"],
+            0,
+        )
+        self.assertEqual(
+            list(
+                PublicationAudit.objects.filter(event=event).values_list("action", flat=True)
+            ),
             ["published", "withdrawn"],
         )
 
