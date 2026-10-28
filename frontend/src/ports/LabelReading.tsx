@@ -10,7 +10,7 @@ import { ErrorSummary, InlineMessage, PendingState, type SummaryError } from "..
 import { SelectField } from "../ui/SelectField";
 import { TextField } from "../ui/TextField";
 import { ME_QUERY } from "../workspace/WorkspaceShell";
-import { coordinates, parseDecimal, portName } from "./portFormat";
+import { coordinates, parseDecimal, portName, readingText } from "./portFormat";
 import { PortSearch } from "./PortSearch";
 
 type PortChoice = "existing" | "from_list" | "enter";
