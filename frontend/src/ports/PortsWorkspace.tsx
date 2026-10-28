@@ -1,5 +1,5 @@
 import { api, type PortLabel, type PortLabelStatus } from "../api/client";
-import { useI18n, type I18n } from "../i18n/I18nProvider";
+import { useI18n } from "../i18n/I18nProvider";
 import { Link, matchRoute, navigate, useLocation, withQuery } from "../router";
 import { Button } from "../ui/Button";
 import { DataTable } from "../ui/DataTable";
