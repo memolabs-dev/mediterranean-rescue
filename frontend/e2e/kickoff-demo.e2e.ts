@@ -39,7 +39,26 @@ test.describe("fictional kickoff walkthrough", () => {
       await page.locator(".explore-map--inline").scrollIntoViewIfNeeded();
     }
     await page.waitForLoadState("networkidle");
+    // An API point alone proves nothing about whether MapLibre actually painted it.
+    await expect(page.locator(".map[role=region]").first()).toHaveAttribute(
+      "data-rendered-markers",
+      "1",
+      { timeout: 10_000 },
+    );
     await page.waitForTimeout(900);
+    // Full-page WebKit screenshots can snapshot a map canvas while it is off-screen.
+    // Record the actual map viewport and exercise the only point (fit to canvas centre).
+    if (testInfo.project.name === "phone") {
+      const canvas = page.locator(".explore-map--inline .maplibregl-canvas").first();
+      await canvas.scrollIntoViewIfNeeded();
+      await page.locator(".explore-map--inline .map-wrap").first().screenshot({
+        path: testInfo.outputPath("kickoff-fictional-mobile-marker.png"),
+      });
+      const rect = await canvas.boundingBox();
+      expect(rect).not.toBeNull();
+      await canvas.click({ position: { x: rect!.width / 2, y: rect!.height / 2 } });
+      await expect(page.getByRole("region", { name: "Event picked on the map" })).toBeVisible();
+    }
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({ path: testInfo.outputPath("kickoff-fictional-map.png"), fullPage: true });
   });

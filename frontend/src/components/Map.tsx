@@ -103,6 +103,18 @@ export function EventMap({
       queueMicrotask(fail);
       return;
     }
+    // Responsive panels can change size without a window resize (notably mobile WebKit).
+    // MapLibre otherwise keeps its old canvas dimensions and can place markers off-screen.
+    const resizeObserver = new ResizeObserver(() => instance.resize());
+    resizeObserver.observe(element.current);
+    // Count actual on-screen rendered symbols, rather than API points, for accessibility QA.
+    const updateVisibleMarkerCount = () => {
+      if (element.current && instance.isStyleLoaded()) {
+        const visible = instance.queryRenderedFeatures(undefined, { layers: ["events", "clusters"] });
+        element.current.dataset.renderedMarkers = String(visible.length);
+      }
+    };
+    instance.on("idle", updateVisibleMarkerCount);
     instance.addControl(new NavigationControl({ showCompass: false }), "top-left");
     let loaded = false;
     instance.on("load", () => {
@@ -187,6 +199,8 @@ export function EventMap({
     // Before load the map cannot work (style or WebGL failure); after load it degrades only.
     instance.on("error", () => (loaded ? degrade() : fail()));
     return () => {
+      resizeObserver.disconnect();
+      instance.off("idle", updateVisibleMarkerCount);
       setMap(null);
       instance.remove();
     };
