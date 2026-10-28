@@ -160,7 +160,8 @@ jobs:
         env:
           E2E_KICKOFF: '1'
           E2E_BASE_URL: http://127.0.0.1:8000
-          E2E_FORWARDED_PROTO: https
+        # This is development mode over local HTTP. Sending a spoofed HTTPS proxy header
+        # with an HTTP Origin breaks Django's intended CSRF origin check on sign-in.
         run: pnpm exec playwright test review-workflow
       - uses: actions/upload-artifact@v7
         if: success()
