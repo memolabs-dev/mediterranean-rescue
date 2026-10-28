@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from django.core.exceptions import ImproperlyConfigured
 
@@ -30,9 +31,49 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "catalog",
 ]
+
+
+# Public map consumers may be hosted by the partner on another origin.
+# These origins receive READ-ONLY public API responses; no private API, cookies,
+# cross-origin sign-in or publication rights are exposed.
+# Default disabled; never use a wildcard or share credentials across origins.
+def _public_frontend_origins():
+    result = set()
+    for raw in os.environ.get("PUBLIC_FRONTEND_ORIGINS", "").split(","):
+        origin = raw.strip()
+        if not origin:
+            continue
+        parsed = urlsplit(origin)
+        try:
+            parsed_port = parsed.port
+        except ValueError as exc:
+            raise ImproperlyConfigured("Invalid PUBLIC_FRONTEND_ORIGINS port") from exc
+        if (
+            parsed.scheme not in {"http", "https"}
+            or not parsed.hostname
+            or "*" in parsed.hostname
+            or parsed.username is not None
+            or parsed.password is not None
+            or origin != f"{parsed.scheme}://{parsed.netloc}"
+            or parsed_port == 0
+            or (
+                parsed.scheme == "http"
+                and not (DEBUG and parsed.hostname in {"localhost", "127.0.0.1", "::1"})
+            )
+        ):
+            raise ImproperlyConfigured(
+                "PUBLIC_FRONTEND_ORIGINS must contain exact HTTPS origins (HTTP loopback only in development)"
+            )
+        result.add(origin)
+    return frozenset(result)
+
+
+PUBLIC_FRONTEND_ORIGINS = _public_frontend_origins()
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "rescue.middleware.ContentSecurityPolicy",
+    "rescue.middleware.PublicFrontendCors",
     # Serves /static/ and, in the production image, the built frontend (FRONTEND_DIST).
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",

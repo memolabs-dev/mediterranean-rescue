@@ -1,5 +1,57 @@
 from catalog.sheets import load_contract
-from django.http import JsonResponse
+from django.conf import settings
+from django.http import HttpResponse, JsonResponse
+from django.utils.cache import patch_vary_headers
+
+
+class PublicFrontendCors:
+    """Opt-in CORS for read-only public API; private routes never receive CORS.
+
+    Cross-origin contributor/admin access intentionally remains unsupported. Deploy a
+    same-origin reverse proxy for another team's private frontend instead.
+    """
+
+    METHODS = {"GET", "HEAD"}
+    HEADERS = {"accept", "content-type"}
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if not request.path.startswith("/api/v1/"):
+            return self.get_response(request)
+
+        origin = request.headers.get("Origin")
+        allowed = bool(origin and origin in settings.PUBLIC_FRONTEND_ORIGINS)
+        preflight_method = request.headers.get("Access-Control-Request-Method")
+
+        if request.method == "OPTIONS" and preflight_method:
+            raw_headers = request.headers.get("Access-Control-Request-Headers", "")
+            headers = {
+                header.strip().lower() for header in raw_headers.split(",") if header.strip()
+            }
+            if (
+                not allowed
+                or preflight_method not in self.METHODS
+                or not headers.issubset(self.HEADERS)
+            ):
+                response = HttpResponse(status=403)
+            else:
+                response = HttpResponse(status=204)
+                response["Access-Control-Allow-Origin"] = origin
+                response["Access-Control-Allow-Methods"] = "GET, HEAD, OPTIONS"
+                response["Access-Control-Allow-Headers"] = "Accept, Content-Type"
+                response["Access-Control-Max-Age"] = "600"
+            patch_vary_headers(response, ("Origin",))
+            return response
+
+        response = self.get_response(request)
+        if origin:
+            patch_vary_headers(response, ("Origin",))
+            if allowed and request.method in self.METHODS:
+                response["Access-Control-Allow-Origin"] = origin
+        return response
+
 
 API_BODY_LIMIT = 65536
 # Export uploads carry a whole CSV: the contract limit plus room for the form fields.
