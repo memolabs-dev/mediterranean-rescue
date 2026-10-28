@@ -85,6 +85,7 @@ export const fr: Messages = {
   "detail.precision.reported": "rapportée",
   "detail.sources": "Sources et provenance",
   "detail.sourceLink": "Consulter la source de l’événement ↗",
+  "detail.referenceMapLink": "Consulter la carte SOS de référence (pas une fiche d’événement) ↗",
   "detail.evidenceError": "Les liens supplémentaires n’ont pas pu être chargés.",
   "detail.evidenceLoading": "Chargement des liens…",
   "detail.evidencePrevious": "Liens précédents",
