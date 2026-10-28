@@ -38,7 +38,7 @@ export function Welcome({ training = false }: { training?: boolean }) {
           <Icon name="close" size={18} />
         </BaseButton>
       </div>
-      <p className="welcome__summary">{t("welcome.mobileSummary")}</p>
+      <p className="welcome__summary">{t(training ? "welcome.mobileSummaryTraining" : "welcome.mobileSummary")}</p>
       <BaseButton
         className="welcome__toggle"
         aria-expanded={expanded}
@@ -50,7 +50,15 @@ export function Welcome({ training = false }: { training?: boolean }) {
       </BaseButton>
       <ul className="welcome__points" id="welcome-points">
         {POINTS.map((point) => (
-          <li key={point}>{t(point === "what" && training ? "welcome.whatTraining" : `welcome.${point}`)}</li>
+          <li key={point}>
+            {t(
+              training && point === "what"
+                ? "welcome.whatTraining"
+                : training && point === "checked"
+                  ? "welcome.checkedTraining"
+                  : `welcome.${point}`,
+            )}
+          </li>
         ))}
       </ul>
       <Link to="/about" className="welcome__more">
