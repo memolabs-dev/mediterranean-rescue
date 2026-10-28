@@ -35,7 +35,11 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
-        if not options["confirm_local_training"] or not settings.DEBUG or settings.DATA_MODE != "training":
+        if (
+            not options["confirm_local_training"]
+            or not settings.DEBUG
+            or settings.DATA_MODE != "training"
+        ):
             raise CommandError(
                 "Refused: requires --confirm-local-training, DEBUG=True and DATA_MODE=training"
             )
@@ -63,9 +67,7 @@ class Command(BaseCommand):
             defaults={"is_active": True},
         )
         if not created and (
-            reviewer.has_usable_password()
-            or reviewer.is_superuser
-            or reviewer.is_staff
+            reviewer.has_usable_password() or reviewer.is_superuser or reviewer.is_staff
         ):
             raise CommandError("Refused: demo reviewer username is occupied by an active login")
         if created:
