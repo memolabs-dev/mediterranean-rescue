@@ -8,7 +8,7 @@ import { FilterBar } from "../ui/FilterBar";
 import { Pagination } from "../ui/Pagination";
 import { WorkspaceShell } from "../workspace/WorkspaceShell";
 import { LabelReading } from "./LabelReading";
-import { portName } from "./portFormat";
+import { portListState, readingText } from "./portFormat";
 
 export const PORTS_PATH = "/workspace/ports";
 const LABEL_PATTERN = `${PORTS_PATH}/labels/:id`;
@@ -143,20 +143,5 @@ function PortLabels({ labelId }: { labelId: string | null }) {
       </div>
     </>
   );
-}
-
-function portListState(i18n: I18n, item: PortLabel) {
-  const row = item.port_list_row;
-  if (!row) return i18n.t("ports.list.absent");
-  if (row.position && row.error_codes.length === 0) return i18n.t("ports.list.positioned");
-  return i18n.t("ports.list.unclear");
-}
-
-function readingText(i18n: I18n, item: PortLabel) {
-  const reading = item.reading;
-  if (!reading) return "";
-  if (reading.interpretation === "vessel") return i18n.t("ports.reading.vessel", { name: reading.vessel?.name ?? "" });
-  if (reading.interpretation === "not_a_port") return i18n.t("ports.reading.not_a_port");
-  return i18n.t("ports.reading.ports", { names: reading.ports.map((port) => portName(i18n, port)).join(", ") });
 }
 
