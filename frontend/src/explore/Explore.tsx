@@ -83,6 +83,7 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [periodOpen, setPeriodOpen] = useState(false);
+  const periodButton = useRef<HTMLButtonElement>(null);
   const [mapOpen, setMapOpen] = useState(true);
   // A record can be linked to: "?event=<id>" opens it, pinned on top until the feed holds it.
   const linkedId = eventParam(query.get("event"));
@@ -380,12 +381,23 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
                   {t("logbook.chip")}
                 </BaseButton>
               )}
-              <BaseButton className="chip chip--period" aria-pressed={Boolean(start || end)} aria-expanded={periodOpen} onClick={() => setPeriodOpen(!periodOpen)}>
+              <BaseButton ref={periodButton} className="chip chip--period" aria-pressed={Boolean(start || end)} aria-expanded={periodOpen} aria-controls="explore-date-range" onClick={() => setPeriodOpen(!periodOpen)}>
                 <Icon name="calendar" size={15} />
                 {start || end ? t("explore.periodSet", { from: start ? i18n.date(start) : "…", to: end ? i18n.date(end) : "…" }) : t("explore.period")}
               </BaseButton>
             </div>
-            <div className="composer__period" data-open={periodOpen || undefined}>
+            <div
+              id="explore-date-range"
+              className="composer__period"
+              data-open={periodOpen || undefined}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") {
+                  event.stopPropagation();
+                  setPeriodOpen(false);
+                  periodButton.current?.focus();
+                }
+              }}
+            >
               <div className="composer__period-inner">
                 <label>
                   {t("filters.from")}
