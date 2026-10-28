@@ -152,6 +152,28 @@ jobs:
           path: frontend/test-results/**/kickoff-fictional-*.png
           if-no-files-found: error
           retention-days: 14
+      # This stack is disposable; use random one-run credentials that cannot work outside CI.
+      # Auth traces are disabled in the dedicated test to avoid archiving passwords.
+      - name: Seed synthetic review identities with random browser-only password
+        run: |
+          python3 - <<'PY'
+          import os
+          import secrets
+          password = secrets.token_urlsafe(36)
+          with open("deploy/.env", "a", encoding="utf-8") as file:
+              file.write(f"\nRESCUE_REVIEW_DEMO_PASSWORD={password}\n")
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as file:
+              file.write(f"RESCUE_REVIEW_DEMO_PASSWORD={password}\n")
+          PY
+          RESCUE_IMAGE=rescue:ci RESCUE_PORT=8000 docker compose -f deploy/compose.yaml --env-file deploy/.env up -d --force-recreate --wait web
+          RESCUE_IMAGE=rescue:ci RESCUE_PORT=8000 docker compose -f deploy/compose.yaml --env-file deploy/.env run --rm -T web seed_review_browser_demo --confirm-local-training
+      - name: Review, prepare, publish and withdraw fictitious event in real browser
+        working-directory: frontend
+        env:
+          E2E_REVIEW_DEMO: '1'
+          E2E_BASE_URL: http://127.0.0.1:8000
+          E2E_FORWARDED_PROTO: https
+        run: pnpm exec playwright test e2e/reviewer-journey.e2e.ts
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
