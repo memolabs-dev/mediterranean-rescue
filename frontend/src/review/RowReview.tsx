@@ -1,9 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { api, errorCode, fetchClient, type IdentityCandidate, type RowDetail } from "../api/client";
+import { api, errorCode, fetchClient, type IdentityCandidate } from "../api/client";
 import { useI18n, type I18n } from "../i18n/I18nProvider";
 import { setNavigationGuard } from "../router";
-import { formatPosition } from "../shared/geo";
 import { Button } from "../ui/Button";
 import { EvidenceBlock } from "../explore/Evidence";
 import { ChoiceGroup } from "../ui/ChoiceGroup";
@@ -12,165 +11,13 @@ import { ErrorSummary, InlineMessage, PendingState, StatusLabel, type SummaryErr
 import { SearchCombobox } from "../ui/SearchCombobox";
 import { TextField } from "../ui/TextField";
 import { AccessProblem } from "./AccessProblem";
+import { Interpreted, Received, RecordedDecision, ReportDoubt } from "./RowDetails";
+import { codeText, identityLabel, rowTitle, serverMessageKey, sheetName } from "./RowReviewFormat";
+
+export { codeText, countLabel, identityLabel, kindLabel, serverMessageKey } from "./RowReviewFormat";
+export type { Summary } from "./RowReviewFormat";
 
 type Decision = "create" | "link" | "later";
-
-const SERVER_CODES = new Set([
-  "conflict",
-  "not_authenticated",
-  "permission_denied",
-  "csrf_failed",
-  "invalid",
-  "not_found",
-  "method_not_allowed",
-  "network",
-]);
-
-/** Catalog key for a server error code; unknown codes get the generic message. */
-export function serverMessageKey(code: string): Parameters<I18n["t"]>[0] {
-  return (SERVER_CODES.has(code) ? `review.server.${code}` : "review.server.error") as Parameters<I18n["t"]>[0];
-}
-type Summary = IdentityCandidate["summary"];
-
-/** The Google Sheets tab in words; its technical name only when no translation exists. */
-function sheetName(i18n: I18n, sheet: string) {
-  const key = `explore.sheet.${sheet}` as Parameters<I18n["t"]>[0];
-  const label = i18n.t(key);
-  return label === key ? sheet : label;
-}
-
-/** A row named by what happened and when ("6 Feb 2024 · Rescue operation"), never by its sheet line. */
-function rowTitle(i18n: I18n, interpreted: unknown) {
-  const facts = (interpreted ?? {}) as { occurred_on?: unknown; kind?: unknown };
-  return i18n.t("review.rowTitle", {
-    date: typeof facts.occurred_on === "string" ? i18n.date(facts.occurred_on) : i18n.t("review.unreadable"),
-    kind: kindLabel(i18n, typeof facts.kind === "string" ? facts.kind : null),
-  });
-}
-
-/** The singular name of one event's kind ("Rescue operation"). */
-export function kindLabel(i18n: I18n, kind: string | null | undefined) {
-  if (!kind) return i18n.t("review.unknown");
-  const key = `kindOne.${kind}` as const;
-  const label = i18n.t(key as Parameters<I18n["t"]>[0]);
-  return label === key ? kind : label;
-}
-
-export function countLabel(i18n: I18n, item: { people: number | null; deaths: number | null }) {
-  if (item.people !== null) return i18n.t("events.people", { count: item.people });
-  if (item.deaths !== null) return i18n.t("review.deaths", { count: item.deaths });
-  return i18n.t("events.peopleUnknown");
-}
-
-export function identityLabel(i18n: I18n, candidate: IdentityCandidate) {
-  const { summary } = candidate;
-  const date = summary.occurred_on ? i18n.date(summary.occurred_on) : i18n.t("review.unknown");
-  return `${kindLabel(i18n, summary.kind)} · ${date} · ${countLabel(i18n, summary)} · ${candidate.id.slice(0, 8)}`;
-}
-
-function Interpreted({ row }: { row: RowDetail }) {
-  const i18n = useI18n();
-  const { t } = i18n;
-  const candidate = (row.interpreted ?? {}) as Record<string, unknown>;
-  const position = candidate.position as
-    | { latitude: string; longitude: string; latitude_format: string; longitude_format: string }
-    | null
-    | undefined;
-  const count = (name: string) => {
-    if (!(name in candidate)) return null;
-    const value = candidate[name];
-    // Unknown, zero and an error are three different answers.
-    if (value === null) return row.error_codes.length ? t("review.unreadable") : t("review.unknown");
-    return i18n.number(Number(value));
-  };
-  const inferred = Boolean(position && `${position.latitude_format}${position.longitude_format}`.includes("inferred"));
-  const counts = ["nb_survivor", "female", "under_18", "death_nb_people"].filter((name) => name in candidate);
-  return (
-    <dl className="review-facts">
-      <div>
-        <dt>{t("review.field.date")}</dt>
-        <dd>{typeof candidate.occurred_on === "string" ? i18n.date(candidate.occurred_on) : t("review.unreadable")}</dd>
-      </div>
-      <div>
-        <dt>{t("review.field.kind")}</dt>
-        <dd>{typeof candidate.kind === "string" ? kindLabel(i18n, candidate.kind) : t("review.unreadable")}</dd>
-      </div>
-      {counts.map((name) => (
-        <div key={name}>
-          <dt>{t(`review.field.${name}` as Parameters<I18n["t"]>[0])}</dt>
-          <dd>{count(name)}</dd>
-        </div>
-      ))}
-      <div>
-        <dt>{t("review.field.position")}</dt>
-        <dd>
-          {position
-            ? formatPosition(i18n, Number(position.latitude), Number(position.longitude))
-            : t("review.unknown")}
-          {inferred && <span className="review-note"> {t("review.inferredHemisphere")}</span>}
-        </dd>
-      </div>
-    </dl>
-  );
-}
-
-function Received({ row }: { row: RowDetail }) {
-  const { t } = useI18n();
-  return (
-    <div className="ui-table review-received">
-      <table>
-        <caption className="sr-only">{t("review.received")}</caption>
-        <thead>
-          <tr>
-            <th scope="col">{t("review.column")}</th>
-            <th scope="col">{t("review.value")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {row.received.cells.map((cell, index) => (
-            <tr key={index}>
-              <th scope="row">{row.received.headers[index] || t("review.unnamedColumn", { index: index + 1 })}</th>
-              {/* Raw text exactly as received; React escapes it, nothing is interpreted as HTML. */}
-              <td className="review-raw">{cell}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function RecordedDecision({ row }: { row: RowDetail }) {
-  const i18n = useI18n();
-  const decision = row.decision;
-  if (!decision) return null;
-  return (
-    <section aria-labelledby="decision-title">
-      <h3 id="decision-title">{i18n.t("review.decision.recorded")}</h3>
-      <p>
-        <StatusLabel status="linked" /> {i18n.t("review.private")}
-      </p>
-      <dl className="review-facts">
-        <div>
-          <dt>{i18n.t("review.decision.identity")}</dt>
-          <dd className="review-raw">{decision.external_id}</dd>
-        </div>
-        <div>
-          <dt>{i18n.t("review.decision.match")}</dt>
-          <dd>{i18n.t(`review.match.${decision.match}` as Parameters<I18n["t"]>[0])}</dd>
-        </div>
-        <div>
-          <dt>{i18n.t("review.decision.by")}</dt>
-          <dd>{decision.approved_by}</dd>
-        </div>
-        <div>
-          <dt>{i18n.t("review.decision.reason")}</dt>
-          <dd>{decision.reason}</dd>
-        </div>
-      </dl>
-    </section>
-  );
-}
 
 export interface RowReviewProps {
   rowId: string;
@@ -178,49 +25,6 @@ export interface RowReviewProps {
   /** Called after the server confirmed the decision; `next` asks to open the following row. */
   onDecided: (next: boolean) => void;
   onClose: () => void;
-}
-
-/** A diagnostic code in words; the code itself when the catalog has no sentence for it. */
-export function codeText(i18n: I18n, code: string) {
-  const key = `diag.code.${code}` as Parameters<I18n["t"]>[0];
-  const text = i18n.t(key);
-  return text === key ? code : text;
-}
-
-// A doubt goes to the coordinator with the link to this very operation, so nobody has to
-// describe where it is (25 October 2026). The application sends nothing itself.
-function ReportDoubt({ title }: { title: string }) {
-  const { t } = useI18n();
-  const [copied, setCopied] = useState(false);
-  const link = window.location.href;
-  const subject = t("review.report.subject", { title });
-  const body = t("review.report.body", { title, link });
-  return (
-    <div className="review-report">
-      <p className="review-note">{t("review.report.help")}</p>
-      <div className="review-report__actions">
-        <a className="pill-button" href={`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`}>
-          {t("review.report.write")}
-        </a>
-        <Button
-          variant="quiet"
-          onClick={async () => {
-            try {
-              await navigator.clipboard.writeText(`${subject}\n\n${body}`);
-              setCopied(true);
-            } catch {
-              setCopied(false);
-            }
-          }}
-        >
-          {t("review.report.copy")}
-        </Button>
-      </div>
-      <p role="status" className="review-note">
-        {copied ? t("review.report.copied") : ""}
-      </p>
-    </div>
-  );
 }
 
 export function RowReview({ rowId, snapshotId, onDecided, onClose }: RowReviewProps) {
@@ -480,4 +284,3 @@ export function RowReview({ rowId, snapshotId, onDecided, onClose }: RowReviewPr
   );
 }
 
-export type { Summary };
