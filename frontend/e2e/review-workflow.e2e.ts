@@ -10,7 +10,11 @@ async function signIn(page: Page, username: string) {
   await page.getByLabel("Username").fill(username);
   await page.getByLabel("Password").fill(process.env.E2E_REVIEW_PASSWORD!);
   await page.getByRole("button", { name: "Sign in" }).click();
-  await expect(page.getByText(username).first()).toBeVisible();
+  await expect.poll(async () => {
+    const me = await page.request.get("/api/private/v1/me/");
+    return me.ok() ? ((await me.json()) as { username: string }).username : null;
+  }).toBe(username);
+  await expect(page.getByText(username).filter({ visible: true }).first()).toBeVisible();
 }
 
 test.describe("authenticated fictional review proof", () => {
@@ -53,7 +57,7 @@ test.describe("authenticated fictional review proof", () => {
     await expect(page.getByRole("radio", { name: "A new event" })).toBeVisible();
     await page.getByRole("radio", { name: "A new event" }).check();
     await page.getByRole("textbox", { name: "Reason" }).fill("Fictional source row checked against invented exercise");
-    await page.getByRole("button", { name: "Save as a new event" }).click();
+    await page.getByRole("button", { name: "Save as a new event", exact: true }).click();
     await expect(page.getByText(/Saved. This event is verified/)).toBeVisible();
     const reviewed = await page.request.get(`/api/private/v1/review/rows/${row.id}/`);
     expect((await reviewed.json()).decision.reason).toContain("Fictional source row");
