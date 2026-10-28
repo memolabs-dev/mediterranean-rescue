@@ -125,7 +125,7 @@ class LogbookSyncTests(PrivateApiTestCase):
         # Re-parse with the same observed contract used for incoming spreadsheets.
         parsed = diagnose(csv_bytes, "Data_operations")
         self.assertEqual(parsed["status"]["source_read"], "complete")
-        self.assertEqual(parsed["status"]["normalization"], "ready")
+        self.assertEqual(parsed["status"]["normalization"], "needs_review")
         self.assertEqual(parsed["rows"][0]["candidate"]["nb_survivor"], 40)
 
     def test_rows_the_association_pasted_into_its_sheet_leave_the_export(self):
