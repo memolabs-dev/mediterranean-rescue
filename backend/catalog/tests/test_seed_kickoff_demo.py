@@ -41,9 +41,7 @@ class SeedKickoffDemoTests(TestCase):
         self.assertEqual(PublicationAudit.objects.count(), 2)
 
         # Two published records: one cartographic point, and one missing its location.
-        self.assertEqual(
-            self.client.get("/api/v1/events/", secure=True).json()["total_count"], 2
-        )
+        self.assertEqual(self.client.get("/api/v1/events/", secure=True).json()["total_count"], 2)
         self.assertEqual(
             self.client.get("/api/v1/map-points/", secure=True).json()["located_count"], 1
         )
