@@ -1,7 +1,8 @@
 from catalog.sheets import load_contract
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils.cache import patch_vary_headers
+
 
 class PublicFrontendCors:
     """Opt-in CORS for read-only public API; private routes never receive CORS.
@@ -27,7 +28,11 @@ class PublicFrontendCors:
         if request.method == "OPTIONS" and preflight_method:
             raw_headers = request.headers.get("Access-Control-Request-Headers", "")
             headers = {header.strip().lower() for header in raw_headers.split(",") if header.strip()}
-            if not allowed or preflight_method not in self.METHODS or not headers <= self.HEADERS:
+            if (
+                not allowed
+                or preflight_method not in self.METHODS
+                or not headers.issubset(self.HEADERS)
+            ):
                 response = HttpResponse(status=403)
             else:
                 response = HttpResponse(status=204)
@@ -45,8 +50,6 @@ class PublicFrontendCors:
                 response["Access-Control-Allow-Origin"] = origin
         return response
 
-
-from django.http import JsonResponse
 
 API_BODY_LIMIT = 65536
 # Export uploads carry a whole CSV: the contract limit plus room for the form fields.
