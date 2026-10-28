@@ -80,7 +80,7 @@ export function DataTable<T>({ caption, columns, rows, rowId, activeId, selectio
           {rows.map((item) => {
             const id = rowId(item);
             return (
-              <tr key={id} aria-current={id === activeId ? "true" : undefined}>
+              <tr key={id} data-row-id={id} aria-current={id === activeId ? "true" : undefined}>
                 {selection && (
                   <td className="ui-table__select">
                     {selection.isEligible(item) && (

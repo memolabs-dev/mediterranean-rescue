@@ -5,6 +5,9 @@ import { expect, test, type Page } from "@playwright/test";
 test.use({ trace: "off", video: "off" });
 
 test.describe("authenticated fictional volunteer review", () => {
+  // The mutation consumes a staged row, so Playwright must not retry it against
+  // the same disposable DB without reseeding the source and test identities.
+  test.describe.configure({ retries: 0 });
   test.skip(process.env.E2E_REVIEW_DEMO !== "1", "requires disposable training database");
 
   const password = process.env.RESCUE_REVIEW_DEMO_PASSWORD;
@@ -78,49 +81,50 @@ test.describe("authenticated fictional volunteer review", () => {
 
     await signIn(page, "fictional-ci-publisher");
     await expect(page.getByRole("heading", { name: "Verify events", exact: true })).toBeVisible();
-    const publisherToken = await csrf(page);
-    const headers = { "X-CSRFToken": publisherToken };
 
-    const prepared = await page.request.post("/api/private/v1/publication/prepare/", {
-      data: { reason: "FICTIONAL prepared after human review" },
-      headers,
-    });
-    expect(prepared.status()).toBe(200);
-    const preparedResult = (await prepared.json()) as { created: number };
-    expect(preparedResult.created).toBe(1);
+    // Exercise the real private UI, not API shortcuts: preparing, publishing and withdrawing
+    // must remain usable with the same authorization/CSRF rules as the backend.
+    await page.goto("/workspace/publish");
+    const preparation = page.locator('section[aria-labelledby="prepare-title"]');
+    await expect(preparation.getByRole("button", { name: "Prepare 1 event" })).toBeVisible();
+    await preparation.getByRole("textbox", { name: "Reason" }).fill("FICTIONAL prepared after human review");
+    await preparation.getByRole("button", { name: "Prepare 1 event" }).click();
+    await expect(preparation.getByText("1 event prepared. It stays private until it is published.")).toBeVisible();
 
     const draftsResponse = await page.request.get("/api/private/v1/publication/events/?status=draft&limit=100");
     expect(draftsResponse.ok()).toBe(true);
-    const drafts = (await draftsResponse.json()) as {
-      items: { id: string; source: string }[];
-    };
+    const drafts = (await draftsResponse.json()) as { items: { id: string; source: string }[] };
     const draft = drafts.items.find((item) => item.source === "FICTIONAL review browser fixture");
     expect(draft).toBeDefined();
 
-    const publish = await page.request.post("/api/private/v1/publication/decisions/", {
-      data: {
-        action: "publish", events: [draft!.id],
-        reason: "FICTIONAL publication validated by test publisher",
-      },
-      headers,
-    });
-    expect(publish.status()).toBe(200);
-    expect((await page.request.get(`/api/v1/events/${draft!.id}/`)).status()).toBe(200);
+    const decision = page.locator('section[aria-labelledby="decide-title"]');
+    await decision.locator(`tr[data-row-id="${draft!.id}"]`).getByRole("checkbox").check();
+    await decision.getByRole("textbox", { name: "Reason" }).fill("FICTIONAL publication validated by test publisher");
+    await decision.getByRole("button", { name: "Publish 1 event" }).click();
+    const publishDialog = page.getByRole("alertdialog");
+    await expect(publishDialog.getByText(/visible to everyone on the public site/)).toBeVisible();
+    await publishDialog.getByRole("button", { name: "Publish 1 event" }).click();
+    await expect(decision.getByText("1 event published. It is now on the public site.")).toBeVisible();
+    await expect.poll(async () => (await page.request.get(`/api/v1/events/${draft!.id}/`)).status()).toBe(200);
 
     await page.goto(`/?event=${draft!.id}`);
     await expect(page.getByText("Fictitious training data")).toBeVisible();
     await page.goto("/workspace/history?scope=team");
     await expect(page.getByText("FICTIONAL publication validated by test publisher")).toBeVisible();
 
-    const withdrawn = await page.request.post("/api/private/v1/publication/decisions/", {
-      data: {
-        action: "withdraw", events: [draft!.id],
-        reason: "FICTIONAL withdrawal after browser proof",
-      },
-      headers,
-    });
-    expect(withdrawn.status()).toBe(200);
-    expect((await page.request.get(`/api/v1/events/${draft!.id}/`)).status()).toBe(404);
+    await page.goto("/workspace/publish");
+    const withdrawal = page.locator('section[aria-labelledby="decide-title"]');
+    await withdrawal.getByRole("button", { name: /On the public site/ }).click();
+    // Published records may share dates, counts and event types. Target exactly
+    // the previously created event, never a matching row from another source.
+    await withdrawal.locator(`tr[data-row-id="${draft!.id}"]`).getByRole("checkbox").check();
+    await withdrawal.getByRole("textbox", { name: "Reason" }).fill("FICTIONAL withdrawal after browser proof");
+    await withdrawal.getByRole("button", { name: "Withdraw 1 event" }).click();
+    const withdrawDialog = page.getByRole("alertdialog");
+    await expect(withdrawDialog.getByText(/disappear from the public site/)).toBeVisible();
+    await withdrawDialog.getByRole("button", { name: "Withdraw 1 event" }).click();
+    await expect(withdrawal.getByText("1 event withdrawn from the public site.")).toBeVisible();
+    await expect.poll(async () => (await page.request.get(`/api/v1/events/${draft!.id}/`)).status()).toBe(404);
   });
 
   test("a signed-in outsider cannot review the fictional source", async ({ page }, info) => {
