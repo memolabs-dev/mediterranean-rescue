@@ -582,6 +582,8 @@ body:has(.explore--team) { background: var(--sos-ground); }
     color: var(--sos-white); font: inherit; font-size: 14px; font-weight: 800; text-decoration: underline;
     text-underline-offset: 3px; cursor: pointer;
   }
+  /* Override the generic button:hover light fill; white text must stay readable on navy. */
+  .explore .welcome__toggle:hover { background: rgb(255 255 255 / 0.14); color: var(--sos-white); }
   .welcome__toggle svg { transition: transform 0.2s var(--ease-out); }
   .welcome--expanded .welcome__toggle svg { transform: rotate(180deg); }
   .welcome__points { font-size: 14px; }

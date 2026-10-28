@@ -6,6 +6,7 @@ import { formatPosition } from "../shared/geo";
 import { Icon } from "../ui/Icon";
 import { EvidenceBlock } from "./Evidence";
 import { sheetName } from "./labels";
+import { isReferenceMapHome } from "./sourceLink";
 
 // The opened record of one event, shared by every view of the main screen.
 function Fact({ label, value }: { label: string; value: string }) {
@@ -98,7 +99,7 @@ export function PublicBody({ id }: { id: string }) {
       <div className="card__sources">
         {webLink(event.source_url) && (
           <a href={webLink(event.source_url)} target="_blank" rel="noreferrer" className="pill-button pill-button--primary">
-            {t("detail.sourceLink")}
+            {t(isReferenceMapHome(event.source_url) ? "detail.referenceMapLink" : "detail.sourceLink")}
             <Icon name="external" size={16} />
           </a>
         )}
