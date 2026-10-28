@@ -2,7 +2,6 @@
 
 from .sheets_cells import load_contract
 
-
 # Report texts. English is the default language; French is the first translation.
 # Keys of EXPLANATIONS are anomaly codes and must exist in every language.
 EXPLANATIONS = {
