@@ -145,9 +145,7 @@ class LogbookEvidence(UUIDModel):
     """Where a row rebuilt from the public logbook comes from (ADR 0014): the page, the entry and
     a short quote, shown next to the row so a volunteer can check it against the source."""
 
-    row = models.OneToOneField(
-        "catalog.SheetRow", on_delete=models.CASCADE, related_name="logbook"
-    )
+    row = models.OneToOneField("catalog.SheetRow", on_delete=models.CASCADE, related_name="logbook")
     source_url = models.URLField(max_length=1000)
     rotation = models.CharField(max_length=200)
     logged_at = models.CharField(max_length=40, help_text="Day and time of the logbook entry.")
