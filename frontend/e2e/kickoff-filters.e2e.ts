@@ -20,7 +20,7 @@ test.describe("fictional filter quality", () => {
     await page.locator(".chip--period").click();
     await page.locator('.composer__period input[type="date"]').first().fill("2027-01-01");
     await expect(cards).toHaveCount(0);
-    await page.getByRole("button", { name: "Reset filters" }).click();
+    await page.locator(".explore-meta__actions").getByRole("button", { name: "Reset filters" }).click();
     await expect(cards).toHaveCount(2);
     await expect(page.locator('.composer__period input[type="date"]').first()).toHaveValue("");
   });
