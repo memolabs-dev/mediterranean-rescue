@@ -98,7 +98,7 @@ test.describe("authenticated fictional volunteer review", () => {
     expect(draft).toBeDefined();
 
     const decision = page.locator('section[aria-labelledby="decide-title"]');
-    await decision.getByRole("checkbox", { name: /Rescue operation/i }).check();
+    await decision.locator(`tr[data-row-id="${draft!.id}"]`).getByRole("checkbox").check();
     await decision.getByRole("textbox", { name: "Reason" }).fill("FICTIONAL publication validated by test publisher");
     await decision.getByRole("button", { name: "Publish 1 event" }).click();
     const publishDialog = page.getByRole("alertdialog");
@@ -115,13 +115,9 @@ test.describe("authenticated fictional volunteer review", () => {
     await page.goto("/workspace/publish");
     const withdrawal = page.locator('section[aria-labelledby="decide-title"]');
     await withdrawal.getByRole("button", { name: /On the public site/ }).click();
-    // The seeded public map also contains other Rescue operations; only the row from
-    // this fixture is eligible for this test's withdrawal. Never select every match.
-    await withdrawal
-      .getByRole("row")
-      .filter({ hasText: "Jan 12, 2026" })
-      .getByRole("checkbox", { name: /Rescue operation/i })
-      .check();
+    // Published records may share dates, counts and event types. Target exactly
+    // the previously created event, never a matching row from another source.
+    await withdrawal.locator(`tr[data-row-id="${draft!.id}"]`).getByRole("checkbox").check();
     await withdrawal.getByRole("textbox", { name: "Reason" }).fill("FICTIONAL withdrawal after browser proof");
     await withdrawal.getByRole("button", { name: "Withdraw 1 event" }).click();
     const withdrawDialog = page.getByRole("alertdialog");
