@@ -49,6 +49,7 @@ def _public_frontend_origins():
         if (
             parsed.scheme not in {"http", "https"}
             or not parsed.hostname
+            or "*" in parsed.hostname
             or parsed.username is not None
             or parsed.password is not None
             or origin != f"{parsed.scheme}://{parsed.netloc}"
