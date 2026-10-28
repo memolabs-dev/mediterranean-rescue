@@ -106,6 +106,7 @@
 .chip {
   display: inline-flex; align-items: center; gap: 7px; flex: none; scroll-snap-align: start;
   min-height: 36px; padding: 0 14px; border: 1px solid var(--color-border); border-radius: var(--radius-pill);
+  transition: background-color 160ms ease-out, border-color 160ms ease-out, color 160ms ease-out;
   background: var(--sos-white); font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap;
   transition: background-color 0.2s var(--ease-out), color 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
 }
@@ -118,7 +119,7 @@
 .chip--incident .chip__dot { background: var(--kind-incident); }
 .chip--shipwreck .chip__dot { background: var(--kind-shipwreck); }
 .chip--dead_missing .chip__dot { background: var(--kind-dead_missing); box-shadow: 0 0 0 1.5px var(--sos-white); }
-.composer__period { display: grid; grid-template-rows: 0fr; }
+.composer__period { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 180ms ease-out; }
 .composer__period[data-open] { grid-template-rows: 1fr; }
 .composer__period-inner { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); min-height: 0; overflow: hidden; padding: 0 var(--space-2); }
 .composer__period:not([data-open]) .composer__period-inner { visibility: hidden; }

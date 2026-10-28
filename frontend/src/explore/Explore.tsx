@@ -338,13 +338,19 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
                 enterKeyHint="search"
               />
               {text && (
-                <BaseButton className="composer__clear" aria-label={t("ui.search.clear")} onClick={() => setText("")}>
+                <BaseButton className="composer__clear" aria-label={t("ui.search.clear")} onClick={() => {
+                      setText("");
+                      resetView();
+                    }}>
                   <Icon name="close" size={16} />
                 </BaseButton>
               )}
             </label>
             <div className="chips" role="group" aria-label={t("filters.kind")} onFocus={revealFocused}>
-              <BaseButton className="chip" aria-pressed={kind === ""} onClick={() => setKind("")}>
+              <BaseButton className="chip" aria-pressed={kind === ""} onClick={() => {
+                  setKind("");
+                  resetView();
+                }}>
                 {t("filters.allKinds")}
               </BaseButton>
               {kinds.map((value) => (
@@ -383,11 +389,17 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
               <div className="composer__period-inner">
                 <label>
                   {t("filters.from")}
-                  <input type="date" value={start} max={end || undefined} onChange={(event) => setStart(event.target.value)} />
+                  <input type="date" value={start} max={end || undefined} onChange={(event) => {
+                      setStart(event.target.value);
+                      resetView();
+                    }} />
                 </label>
                 <label>
                   {t("filters.to")}
-                  <input type="date" value={end} min={start || undefined} onChange={(event) => setEnd(event.target.value)} />
+                  <input type="date" value={end} min={start || undefined} onChange={(event) => {
+                      setEnd(event.target.value);
+                      resetView();
+                    }} />
                 </label>
               </div>
             </div>
