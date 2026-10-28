@@ -35,7 +35,7 @@ class ReviewBrowserDemoSeedTests(TestCase):
         self.assertTrue(source.synthetic)
         self.assertEqual(source.url, "https://example.org/fictional/review")
         self.assertEqual(SheetSnapshot.objects.filter(source=source).count(), 1)
-        self.assertEqual(source.sheetsnapshot_set.get().rows.count(), 1)
+        self.assertEqual(SheetSnapshot.objects.get(source=source).rows.count(), 1)
         self.assertFalse(Event.objects.exists())
 
         user_model = get_user_model()
