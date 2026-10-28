@@ -33,8 +33,14 @@ test.describe("fictional kickoff walkthrough", () => {
     await expect(page.getByText(/These records and their example links are fictional test fixtures/)).toBeVisible();
     await expect(page.locator(".maplibregl-canvas").filter({ visible: true }).first()).toBeVisible();
     await expect(page.locator("li.card")).toHaveCount(2);
-    // Let the map paint its loaded feature before preserving the visual evidence.
-    await page.waitForTimeout(600);
+    // Mobile's large introduction can put the lazy-loaded map below the viewport.
+    // Scroll it into view first, then capture the entire screen after its data and paint settle.
+    if (testInfo.project.name === "phone") {
+      await page.locator(".explore-map--inline").scrollIntoViewIfNeeded();
+    }
+    await page.waitForLoadState("networkidle");
+    await page.waitForTimeout(900);
+    await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({ path: testInfo.outputPath("kickoff-fictional-map.png"), fullPage: true });
   });
 
