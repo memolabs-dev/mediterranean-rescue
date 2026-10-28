@@ -5,6 +5,9 @@ import { expect, test, type Page } from "@playwright/test";
 test.use({ trace: "off", video: "off" });
 
 test.describe("authenticated fictional volunteer review", () => {
+  // The mutation consumes a staged row, so Playwright must not retry it against
+  // the same disposable DB without reseeding the source and test identities.
+  test.describe.configure({ retries: 0 });
   test.skip(process.env.E2E_REVIEW_DEMO !== "1", "requires disposable training database");
 
   const password = process.env.RESCUE_REVIEW_DEMO_PASSWORD;
@@ -112,7 +115,13 @@ test.describe("authenticated fictional volunteer review", () => {
     await page.goto("/workspace/publish");
     const withdrawal = page.locator('section[aria-labelledby="decide-title"]');
     await withdrawal.getByRole("button", { name: /On the public site/ }).click();
-    await withdrawal.getByRole("checkbox", { name: /Rescue operation/i }).check();
+    // The seeded public map also contains other Rescue operations; only the row from
+    // this fixture is eligible for this test's withdrawal. Never select every match.
+    await withdrawal
+      .getByRole("row")
+      .filter({ hasText: "Jan 12, 2026" })
+      .getByRole("checkbox", { name: /Rescue operation/i })
+      .check();
     await withdrawal.getByRole("textbox", { name: "Reason" }).fill("FICTIONAL withdrawal after browser proof");
     await withdrawal.getByRole("button", { name: "Withdraw 1 event" }).click();
     const withdrawDialog = page.getByRole("alertdialog");
