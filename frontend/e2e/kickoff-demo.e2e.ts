@@ -27,8 +27,11 @@ test.describe("fictional kickoff walkthrough", () => {
 
     await page.goto("/");
     await expect(page.getByText("Training mode: every event and count shown is fictitious.")).toBeVisible();
+    await expect(page.getByText(/These records and their example links are fictional test fixtures/)).toBeVisible();
     await expect(page.locator(".maplibregl-canvas").filter({ visible: true }).first()).toBeVisible();
     await expect(page.locator("li.card")).toHaveCount(2);
+    // Let the map paint its loaded feature before preserving the visual evidence.
+    await page.waitForTimeout(600);
     await page.screenshot({ path: testInfo.outputPath("kickoff-fictional-map.png"), fullPage: true });
   });
 
@@ -45,10 +48,10 @@ test.describe("fictional kickoff walkthrough", () => {
       "href",
       "https://example.org/fictional/rescue-001",
     );
-    await page.screenshot({ path: testInfo.outputPath("kickoff-fictional-source-en.png"), fullPage: true });
+    await page.locator(".card--open").first().screenshot({ path: testInfo.outputPath("kickoff-fictional-source-en.png") });
     await page.getByRole("button", { name: "Français" }).click();
     await expect(page.getByText("Données d’entraînement fictives")).toBeVisible();
-    await page.screenshot({ path: testInfo.outputPath("kickoff-fictional-source-fr.png"), fullPage: true });
+    await page.locator(".card--open").first().screenshot({ path: testInfo.outputPath("kickoff-fictional-source-fr.png") });
   });
 
   test("workspace stays private without a volunteer session", async ({ page }) => {
