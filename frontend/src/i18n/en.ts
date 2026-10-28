@@ -82,6 +82,7 @@ export const en = {
   "detail.precision.reported": "reported",
   "detail.sources": "Sources and provenance",
   "detail.sourceLink": "Open the event source ↗",
+  "detail.referenceMapLink": "Open the SOS reference map (not an event permalink) ↗",
   "detail.evidenceError": "Additional links could not be loaded.",
   "detail.evidenceLoading": "Loading links…",
   "detail.evidencePrevious": "Previous links",
