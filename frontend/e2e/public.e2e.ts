@@ -93,3 +93,27 @@ test("the about page explains the limits before the details", async ({ page }) =
   const words = (await lead.innerText()).trim().split(/\s+/);
   expect(words.length, "the first explanation should fit a short paragraph").toBeLessThan(50);
 });
+
+test("date filter opens by keyboard and Escape restores focus", async ({ page }) => {
+  await page.goto("/");
+  const period = page.getByRole("button", { name: "Period", exact: true });
+  await period.focus();
+  await page.keyboard.press("Enter");
+  await expect(period).toHaveAttribute("aria-expanded", "true");
+  const from = page.getByLabel("From", { exact: true });
+  await expect(from).toBeVisible();
+  await from.focus();
+  await page.keyboard.press("Escape");
+  await expect(period).toHaveAttribute("aria-expanded", "false");
+  await expect(period).toBeFocused();
+  await expect(from).toBeHidden();
+});
+
+test("respect reduced motion on public map filters", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const duration = await page.getByRole("button", { name: "Period", exact: true }).evaluate(
+    (node) => Number.parseFloat(getComputedStyle(node).transitionDuration),
+  );
+  expect(duration).toBeLessThan(0.01);
+});
