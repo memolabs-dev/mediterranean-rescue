@@ -5,7 +5,6 @@ from unittest.mock import patch
 
 from django.core.exceptions import ImproperlyConfigured
 from django.test import SimpleTestCase, override_settings
-
 from rescue.settings import _public_frontend_origins
 
 
