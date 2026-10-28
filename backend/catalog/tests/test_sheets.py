@@ -17,7 +17,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from catalog import sheets
+from catalog import sheets, sheets_cells, sheets_reporting
 from catalog.sheets import (
     CellError,
     check_url,
@@ -423,7 +423,10 @@ class ReportLanguageTests(unittest.TestCase):
         self.assertEqual(set(sheets.STATUS_TEXT["en"]), set(sheets.STATUS_TEXT["fr"]))
 
     def test_every_emitted_code_is_explained(self):
-        source = Path(sheets.__file__).read_text(encoding="utf-8")
+        source = "\n".join(
+            Path(module.__file__).read_text(encoding="utf-8")
+            for module in (sheets, sheets_cells, sheets_reporting)
+        )
         emitted = set(
             re.findall(
                 r'(?:CellError|issue|flag)\(\s*"(?:error|warning)?"?,?\s*"([a-z_0-9]+)"', source
