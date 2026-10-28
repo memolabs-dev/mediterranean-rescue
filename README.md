@@ -67,3 +67,15 @@ CI runs all of it on every pull request, plus the migration check, Django's depl
 ## License
 
 [MIT](LICENSE).
+
+## Local Git hooks
+
+Run `make hooks` once after cloning (requires `uvx` or the Python `pre-commit`
+package). This installs the pre-commit entrypoint and its pinned Ruff and safety
+hooks for this checkout. If a custom `core.hooksPath` already exists, the installer
+preserves it instead of silently overriding your configuration.
+
+The hook runs Ruff lint and formatting on staged Python files, checks merge
+conflicts/line endings and rejects obvious private keys or oversized files.
+Run `make lint` to mirror the backend's CI lint. GitHub Actions remains
+responsible for the full backend, frontend, browser and container tests.
