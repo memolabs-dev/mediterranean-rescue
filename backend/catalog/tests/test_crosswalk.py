@@ -468,7 +468,7 @@ class ReviewFindingTests(CrosswalkTestCase):
         first, _ = self.stage(content)
         contract = load_contract()
         contract["version"] = "sheets-observed-v2"
-        with mock.patch("catalog.crosswalk.load_contract", return_value=contract):
+        with mock.patch("catalog.review.crosswalk.load_contract", return_value=contract):
             second, created = self.stage(content)
         self.assertTrue(created)
         self.assertNotEqual(first.pk, second.pk)

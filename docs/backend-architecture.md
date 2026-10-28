@@ -28,6 +28,10 @@ backend/catalog/
     accounts.py       # Invitations
   ingestion/
     imports.py        # Validation et import JSON idempotent
+  review/
+    crosswalk.py     # Identités et correspondances approuvées
+    drafts.py        # Traduction des lignes revues en brouillons
+    revisions.py     # Corrections sourcées sans écrasement silencieux
   publication/
     services.py       # Décision transactionnelle et audit
   public_api/
@@ -35,9 +39,10 @@ backend/catalog/
   api.py              # Façade compatible pour URLs et tests existants
   imports.py          # Façade compatible pour imports existants
   services.py         # Façade compatible pour publication existante
+  crosswalk.py / drafts.py / revisions.py  # Façades des services de revue
 ```
 
-Les autres modules historiques (`crosswalk`, `sheets`, `sync`, `drafts`, `revisions`, API privées) restent en place jusqu'à extraction **par lots testés** : pas de grand déménagement risqué en parallèle de la préparation de la saison 15. Les modèles sont séparés sans leur attribuer de nouveaux labels Django.
+Les services de revue (`crosswalk`, `drafts`, `revisions`) vivent désormais dans `catalog.review` ; les anciennes importations restent utilisables via des façades. Le reste (`sheets`, `sync`, API privées) reste en place jusqu'à extraction **par lots testés**. Les modèles sont séparés sans leur attribuer de nouveaux labels Django.
 
 ## Contrat pour raccorder un frontend partenaire
 
@@ -77,7 +82,7 @@ CORS ne remplace ni la licence des données ni les contrôles de publication. Au
 
 ## Travaux suivants, sous tickets séparés
 
-1. Extraire les services de revue (crosswalk, drafts, revisions) vers `catalog.review`, sans casser l'identité de leurs symboles ; tester les accès et transactions.
+1. Maintenir des tests de compatibilité des imports legacy et des décisions de revue, sans modifier les règles de publication.
 2. Extraire le traitement des Sheets et des lecteurs périodiques vers `catalog.ingestion`, avec verrous, erreurs de réseau, reprises et métriques.
 3. Clarifier les adaptateurs de publication/export pour la carte historique : voir #57.
 4. Contractualiser les sources, les droits et le périmètre réel avec SOS : voir #48.
