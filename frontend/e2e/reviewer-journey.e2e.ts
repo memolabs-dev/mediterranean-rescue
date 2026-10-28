@@ -2,9 +2,10 @@ import { expect, test, type Page } from "@playwright/test";
 
 // Strictly disposable database, seeded with fictional CSV and randomly generated CI users.
 // No auth traces/screenshots: even throwaway passwords must not leak into artifacts.
+test.use({ trace: "off", video: "off" });
+
 test.describe("authenticated fictional volunteer review", () => {
   test.skip(process.env.E2E_REVIEW_DEMO !== "1", "requires disposable training database");
-  test.use({ trace: "off", video: "off" });
 
   const password = process.env.RESCUE_REVIEW_DEMO_PASSWORD;
   const requirePassword = () => {
