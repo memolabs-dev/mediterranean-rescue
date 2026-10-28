@@ -1,8 +1,8 @@
 """Compatible import surface; implementation lives in ingestion module."""
 
 from catalog.ingestion.imports import (
-    apply_batch,
     InputEvent,
+    apply_batch,
     normalize,
     stage_payload,
 )
