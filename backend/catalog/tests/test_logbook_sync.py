@@ -1,6 +1,9 @@
 """The public logbook read into staging, shown with its evidence and exported for the sheet
 (ADR 0014). A fictitious site stands in for sosmediterranee.org; real PostGIS."""
 
+import csv
+import io
+
 from django.test import Client
 
 from catalog.crosswalk import approve_link
@@ -98,6 +101,32 @@ class LogbookSyncTests(PrivateApiTestCase):
         self.assertTrue(lines[0].startswith("date,type_ops,nb_ops,nb_survivor"))
         self.assertTrue(lines[1].startswith("13/03/2025,Rescue,1,40"))
         self.assertEqual(self.get("logbook/").json()["verified"], 1)
+
+    def test_verified_export_round_trips_the_observed_cartong_contract(self):
+        """A fictional reviewed export matches exact CartONG columns and is re-readable."""
+        from catalog.logbook import SHEET_HEADER
+        from catalog.sheets import diagnose
+
+        run = self.read()
+        first = run.snapshot.rows.get(line=2)
+        approve_link(row=first, actor=self.reviewer, reason="Approved synthetic entry")
+        response = self.get("logbook/export/")
+        csv_bytes = response.content
+        reader = csv.DictReader(io.StringIO(csv_bytes.decode("utf-8")))
+        self.assertEqual(reader.fieldnames, SHEET_HEADER)
+        records = list(reader)
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["date"], "13/03/2025")
+        self.assertEqual(records[0]["type_ops"], "Rescue")
+        self.assertEqual(records[0]["nb_survivor"], "40")
+        self.assertEqual(records[0]["latitude"], "33.5")
+        self.assertEqual(records[0]["longitude"], "12.25")
+
+        # Re-parse with the same observed contract used for incoming spreadsheets.
+        parsed = diagnose(csv_bytes, "Data_operations")
+        self.assertEqual(parsed["status"]["source_read"], "complete")
+        self.assertEqual(parsed["status"]["normalization"], "ready")
+        self.assertEqual(parsed["rows"][0]["candidate"]["nb_survivor"], 40)
 
     def test_rows_the_association_pasted_into_its_sheet_leave_the_export(self):
         # Audit of 25 October 2026: the fixed start must not make SOS paste a row twice.
