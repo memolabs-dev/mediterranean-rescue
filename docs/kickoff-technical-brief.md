@@ -67,7 +67,40 @@ uv run --frozen ruff check backend scripts
 uv run --frozen ruff format --check backend scripts
 ```
 
-**État de la recette :** tests ajoutés, **pas encore déclarés réussis** ; relever les résultats GitHub Actions de la PR et un contrôle navigateur réel si une démonstration complète de l'interface est prévue.
+**Preuve vérifiée :** [CI GitHub Actions #69](https://github.com/memolabs-dev/mediterranean-rescue/actions/runs/40690823798), commit `8767857` : Python lint, Django/PostGIS + build, tests navigateur image de production et image finale réussis. Ce run vérifiait **7 nouveaux tests backend**. L'ajout de la commande locale ci-dessous et de ses tests nécessite **une nouvelle CI** avant fusion. Le run navigateur ne constitue **pas** une capture du nouveau scénario fictif.
+
+### Démonstration visible sur une base locale isolée
+
+La commande `seed_kickoff_demo` charge 5 **opérations entièrement fictives**, en publie 2 dans le mode `training`, et refuse son exécution en production, en mode non-debug ou sans confirmation. Elle ne crée aucun compte avec mot de passe utilisable. Éviter tout hébergement public ou les données réelles pour cet exercice.
+
+Dans la racine du dépôt, avec Docker, Node 24 et pnpm :
+
+```sh
+python3 scripts/init_local.py
+docker compose -p rescue-kickoff build db api
+docker compose -p rescue-kickoff up -d db
+docker compose -p rescue-kickoff run --rm -e DJANGO_ENV=development -e DATA_MODE=training api uv run --no-sync python backend/manage.py migrate --noinput
+docker compose -p rescue-kickoff run --rm -e DJANGO_ENV=development -e DATA_MODE=training api uv run --no-sync python backend/manage.py seed_kickoff_demo --confirm-local-training
+docker compose -p rescue-kickoff run --rm --service-ports -e DJANGO_ENV=development -e DATA_MODE=training api
+```
+
+Dans **un deuxième terminal** :
+
+```sh
+cd frontend
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+Ouvrir `http://127.0.0.1:5173/` : le flux public doit contenir **2 entrées fictives**, dont **une seule position** sur la carte ; l'autre est sans localisation et sans effectif connu. Les 3 autres événements restent en brouillon. Pour vérifier les réponses API, consulter `/api/v1/events/` et `/api/v1/map-points/` via le serveur Vite.
+
+Le projet Compose est volontairement nommé `rescue-kickoff` pour utiliser un volume PostGIS distinct du projet habituel. L'API d'entraînement n'est exposée que sur `127.0.0.1:8010`. Ne pas lancer un autre backend sur ce port. À la fin de l'exercice, arrêter le serveur et supprimer **uniquement** le volume de démonstration :
+
+```sh
+docker compose -p rescue-kickoff down -v
+```
+
+**Limite :** le contrôle navigateur manuel de cette procédure reste à exécuter ; la commande ne démontre pas à elle seule le parcours de validation dans l'interface d'équipe.
 
 ## 4. Travail en binôme et méthode de suivi
 
