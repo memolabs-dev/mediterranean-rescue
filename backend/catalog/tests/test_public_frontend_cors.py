@@ -4,7 +4,7 @@ import os
 from unittest.mock import patch
 
 from django.core.exceptions import ImproperlyConfigured
-from django.test import SimpleTestCase, override_settings
+from django.test import SimpleTestCase, TestCase, override_settings
 from rescue.settings import _public_frontend_origins
 
 
@@ -12,7 +12,7 @@ from rescue.settings import _public_frontend_origins
     PUBLIC_FRONTEND_ORIGINS=frozenset({"https://atlas.partner.example"}),
     SECURE_SSL_REDIRECT=False,
 )
-class ExternalFrontendTests(SimpleTestCase):
+class ExternalFrontendTests(TestCase):
     ORIGIN = "https://atlas.partner.example"
 
     def test_public_api_get_and_404_are_accessible(self):
