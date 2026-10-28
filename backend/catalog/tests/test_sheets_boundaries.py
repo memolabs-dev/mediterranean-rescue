@@ -8,8 +8,15 @@ from catalog import sheets, sheets_cells, sheets_reporting
 class SheetsBoundaryTests(unittest.TestCase):
     def test_parser_exports_are_compatible(self):
         for name in (
-            "CellError", "load_contract", "parse_coordinate", "parse_date",
-            "parse_count", "parse_decimal", "check_url", "split_list", "scan_quoting",
+            "CellError",
+            "load_contract",
+            "parse_coordinate",
+            "parse_date",
+            "parse_count",
+            "parse_decimal",
+            "check_url",
+            "split_list",
+            "scan_quoting",
         ):
             self.assertIs(getattr(sheets, name), getattr(sheets_cells, name))
 
