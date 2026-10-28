@@ -19,6 +19,7 @@ from django.contrib.auth.models import Permission
 from django.core.exceptions import ValidationError
 from django.db import connection
 
+from catalog.models import SHEETS, SheetSync, Source
 from catalog.review.crosswalk import (
     STAGE_PERMISSION,
     blocking_reason,
@@ -26,7 +27,6 @@ from catalog.review.crosswalk import (
     propose_links,
     stage_snapshot,
 )
-from catalog.models import SHEETS, SheetSync, Source
 from catalog.sheets import load_contract
 
 logger = logging.getLogger(__name__)

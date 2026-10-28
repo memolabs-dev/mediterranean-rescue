@@ -2,15 +2,15 @@
 
 from catalog.ingestion.sync import (
     ADVISORY_LOCK_KEY,
-    ALLOWED_HOSTS,
     ALLOWED_HOST_SUFFIXES,
+    ALLOWED_HOSTS,
     CHUNK_BYTES,
     DOWNLOAD_DEADLINE_SECONDS,
     REVIEW_SHEETS,
     SOCKET_TIMEOUT_SECONDS,
     FetchRefused,
-    _CheckedRedirects,
     _check_url,
+    _CheckedRedirects,
     _try_lock,
     _unlock,
     check_config,

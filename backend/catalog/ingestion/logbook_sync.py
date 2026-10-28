@@ -14,10 +14,10 @@ from datetime import date
 from django.core.exceptions import ValidationError
 from django.db import DatabaseError, connection, transaction
 
-from catalog.review.crosswalk import stage_snapshot
+from catalog.ingestion.sync import summarize, sync_actor
 from catalog.logbook import Fetcher, ReadFailed, extract, rows_csv
 from catalog.models import LogbookEvidence, RowIdentityLink, SheetSnapshot, SheetSync, Source
-from catalog.ingestion.sync import summarize, sync_actor
+from catalog.review.crosswalk import stage_snapshot
 
 logger = logging.getLogger(__name__)
 
