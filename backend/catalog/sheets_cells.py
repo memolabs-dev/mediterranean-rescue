@@ -184,5 +184,3 @@ def scan_quoting(text):
     if state == "quoted":
         return "unterminated_quoted_field", opened_on
     return None
-
-
