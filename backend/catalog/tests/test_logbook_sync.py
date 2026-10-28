@@ -272,7 +272,7 @@ class LogbookSafetyTests(PrivateApiTestCase):
 
         sync_logbook(actor=self.reviewer, get=fake_site)
         with mock.patch(
-            "catalog.logbook_sync.stage_snapshot", side_effect=ValidationError("refused")
+            "catalog.ingestion.logbook_sync.stage_snapshot", side_effect=ValidationError("refused")
         ):
             run = sync_logbook(actor=self.reviewer, get=fake_site)
         self.assertEqual((run.status, run.message), ("refused", "refused"))

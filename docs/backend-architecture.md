@@ -28,6 +28,8 @@ backend/catalog/
     accounts.py       # Invitations
   ingestion/
     imports.py        # Validation et import JSON idempotent
+    sync.py           # Lecture planifiée, verrou et reprise Google Sheets
+    logbook_sync.py   # Lecture documentée du journal de bord
   review/
     crosswalk.py     # Identités et correspondances approuvées
     drafts.py        # Traduction des lignes revues en brouillons
@@ -40,9 +42,10 @@ backend/catalog/
   imports.py          # Façade compatible pour imports existants
   services.py         # Façade compatible pour publication existante
   crosswalk.py / drafts.py / revisions.py  # Façades des services de revue
+  sync.py / logbook_sync.py               # Façades de compatibilité des lecteurs
 ```
 
-Les services de revue (`crosswalk`, `drafts`, `revisions`) vivent désormais dans `catalog.review` ; les anciennes importations restent utilisables via des façades. Le reste (`sheets`, `sync`, API privées) reste en place jusqu'à extraction **par lots testés**. Les modèles sont séparés sans leur attribuer de nouveaux labels Django.
+Les services de revue (`crosswalk`, `drafts`, `revisions`) vivent désormais dans `catalog.review` ; les anciennes importations restent utilisables via des façades. Le reste (`sheets`/parseurs, API privées) reste en place jusqu'à extraction **par lots testés**. Les lecteurs `sync` et `logbook_sync` vivent maintenant dans `catalog.ingestion` avec façades compatibles. Les modèles sont séparés sans leur attribuer de nouveaux labels Django.
 
 ## Contrat pour raccorder un frontend partenaire
 
@@ -83,7 +86,7 @@ CORS ne remplace ni la licence des données ni les contrôles de publication. Au
 ## Travaux suivants, sous tickets séparés
 
 1. Maintenir des tests de compatibilité des imports legacy et des décisions de revue, sans modifier les règles de publication.
-2. Extraire le traitement des Sheets et des lecteurs périodiques vers `catalog.ingestion`, avec verrous, erreurs de réseau, reprises et métriques.
+2. Conserver les invariants des lecteurs périodiques maintenant dans `catalog.ingestion` : verrous, erreurs réseau, reprises, traçabilité, et planifier la séparation du parseur `sheets.py` après un contrat de données approuvé.
 3. Clarifier les adaptateurs de publication/export pour la carte historique : voir #57.
 4. Contractualiser les sources, les droits et le périmètre réel avec SOS : voir #48.
 5. Faire vérifier le parcours complet login → revue → publication → retrait : voir #45 / PR #55 avant de déclarer une mise en production.
