@@ -65,7 +65,9 @@ jobs:
 
   e2e:
     name: End-to-end on the production image
-    runs-on: ubuntu-latest
+    # Pinned: on ubuntu-latest (Ubuntu 26.04, observed 29 October 2026) Playwright 1.64's WebKit fails to
+    # start, missing libicudata.so.74 from Ubuntu 24.04. Move on when Playwright supports 26.04.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: docker/setup-buildx-action@v4
