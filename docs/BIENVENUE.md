@@ -61,7 +61,7 @@ Dans l'espace équipe, commence par **Practise** : un exercice de deux minutes s
 | `make logs` | Suivre les journaux de l'API et du frontend |
 | `make stop` | Tout arrêter ; la base est conservée |
 | `make test` | Lancer les tests backend et frontend |
-| `make check` | Tout ce que la CI vérifie, sauf les tests navigateur : à lancer avant d'ouvrir une PR |
+| `make check` | Ce que la CI vérifie, sauf les tests navigateur et l'image de production : à lancer avant d'ouvrir une PR |
 | `make help` | La liste complète |
 
 ## Choisir une tâche
@@ -80,7 +80,7 @@ Dans l'espace équipe, commence par **Practise** : un exercice de deux minutes s
 
 Ensuite, la branche `main` est protégée :
 
-- personne ne pousse directement sur `main`, même les mainteneurs ;
+- personne ne pousse directement sur `main`, même les mainteneurs (les admins peuvent seulement fusionner leur propre PR sans attendre de relecture) ;
 - une PR doit avoir une relecture approuvée et les quatre vérifications de la CI au vert
   (lint Python, tests et contrat, tests de bout en bout, image de production) ;
 - les commentaires de relecture doivent être résolus ;

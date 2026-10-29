@@ -43,10 +43,13 @@ test:
 	$(MANAGE) test catalog.tests --noinput
 	$(WEB) "pnpm install --frozen-lockfile && pnpm test"
 
-# Everything CI checks before a pull request, except the browser tests.
+# What CI checks on a pull request, except the browser tests and the production image.
 check: lint test
 	$(MANAGE) makemigrations --check --dry-run
-	$(WEB) "pnpm install --frozen-lockfile && pnpm lint && pnpm typecheck && pnpm build"
+	docker compose run --rm -e DJANGO_ENV=production -e DJANGO_ALLOWED_HOSTS=rescue.invalid -e LOCAL_AUTO_LOGIN= -e DATA_MODE=production api uv run --no-sync python backend/manage.py check --deploy --fail-level WARNING
+	docker compose run --rm -T api uv run --no-sync python backend/manage.py spectacular --lang en --validate --fail-on-warn > contracts/openapi.yaml
+	$(WEB) "pnpm install --frozen-lockfile && pnpm codegen && pnpm lint && pnpm typecheck && pnpm build"
+	git diff --exit-code -- contracts/openapi.yaml frontend/src/api/schema.d.ts
 
 # Check Python style, like the lint job in GitHub Actions.
 lint:

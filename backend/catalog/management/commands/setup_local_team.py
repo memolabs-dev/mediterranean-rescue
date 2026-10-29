@@ -40,6 +40,9 @@ class Command(BaseCommand):
         )
         if not created and (user.has_usable_password() or user.is_staff or user.is_superuser):
             raise CommandError(f"Refused: {USERNAME} is already a real login")
+        if not user.is_active:
+            # LOCAL_AUTO_LOGIN never signs in an inactive account: say so instead of a silent no-op.
+            raise CommandError(f"Refused: {USERNAME} was deactivated; reactivate it on purpose")
         if created:
             user.set_unusable_password()
             user.save(update_fields=["password"])

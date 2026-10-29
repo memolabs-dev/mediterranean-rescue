@@ -31,7 +31,11 @@ jobs:
       - name: Install package manager
         run: npm install --global pnpm@12.10.1
       - name: Prepare isolated environment
-        run: python3 scripts/init_local.py
+        # A new .env is made for `make dev` (training data, automatic sign-in); CI checks the
+        # production data path, and the deployment check refuses automatic sign-in.
+        run: |
+          python3 scripts/init_local.py
+          sed -i -e 's/^DATA_MODE=training$/DATA_MODE=production/' -e '/^LOCAL_AUTO_LOGIN=/d' .env
       - name: Build backend and database
         run: docker compose build
       - name: Backend integration tests on PostGIS

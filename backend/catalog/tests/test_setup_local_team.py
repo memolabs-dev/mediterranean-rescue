@@ -54,3 +54,7 @@ class SetupLocalTeamTests(TestCase):
         model.objects.filter(username="local-team").update(password="!", is_staff=True)
         with self.assertRaises(CommandError):
             self.run_setup()
+
+        model.objects.filter(username="local-team").update(is_staff=False, is_active=False)
+        with self.assertRaises(CommandError):
+            self.run_setup()

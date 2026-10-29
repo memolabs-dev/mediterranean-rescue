@@ -33,7 +33,7 @@ make dev
 
 Open <http://127.0.0.1:5173/> for the public site and <http://127.0.0.1:5173/workspace> for the team space, where you are signed in as `local-team`. A new `.env` starts in training mode: five fictional operations, no real data. `make help` lists the other commands.
 
-To read the real public logbook instead, set `DATA_MODE=production` in `.env` and run `docker compose run --rm api uv run --no-sync python backend/manage.py sync_logbook`. Running the frontend on the host (`cd frontend && pnpm dev`, Node 24+ and pnpm 12.10.1) still works against the API on port 8010.
+To read the real public logbook instead, set `DATA_MODE=production` in `.env`, remove the `LOCAL_AUTO_LOGIN` line (otherwise the local account, which can publish, stays signed in on real data) and run `docker compose run --rm api uv run --no-sync python backend/manage.py sync_logbook`. Running the frontend on the host (`cd frontend && pnpm dev`, Node 24+ and pnpm 12.10.1) still works against the API on port 8010.
 
 ## Tests
 
@@ -41,7 +41,7 @@ To read the real public logbook instead, set `DATA_MODE=production` in `.env` an
 make check
 ```
 
-It runs Ruff, the backend tests on PostGIS, the migration check, and the frontend lint, type check, unit tests and build, all in Docker. CI runs the same on every pull request, plus the migration check, Django's deployment checks, the OpenAPI contract (regenerated and compared) and the production image build ([`.github/workflows/ci.yaml`](.github/workflows/ci.yaml)).
+It runs, in Docker: Ruff, the backend tests on PostGIS, the migration check, Django's deployment checks, the OpenAPI contract (regenerated and compared), and the frontend lint, type check, unit tests and build. CI runs the same on every pull request, plus the browser tests and the production image build ([`.github/workflows/ci.yaml`](.github/workflows/ci.yaml)).
 
 ## Deploy
 

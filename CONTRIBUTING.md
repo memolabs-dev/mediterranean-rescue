@@ -44,7 +44,7 @@ cd frontend && pnpm codegen
 
 ### Checks
 
-`make check` runs them all in Docker. The same commands, one by one:
+`make check` runs them in Docker, with Django's deployment checks and the OpenAPI contract comparison; CI adds the browser tests and the production image. The main commands, one by one:
 
 ```sh
 docker compose run --rm api uv run --no-sync python backend/manage.py test catalog.tests --noinput
