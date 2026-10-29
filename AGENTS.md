@@ -24,5 +24,7 @@ Conventions for anyone, human or agent, contributing to this repository.
 ## Workflow
 - Read `README.md`, `docs/PROJECT.md` and the latest decision records before changing the model or a contract; record a short ADR for such changes.
 - Backend tests run on PostGIS through Docker Compose (see README); the offline Sheets diagnostic tests also run on the host with `cd backend && python3 -m unittest catalog.tests.test_sheets`.
-- The project is public at `memolabs-dev/mediterranean-rescue` (decision of 25 October 2026): work on a branch, open a pull request against `main`, CI must be green. No pull request to `dataforgoodfr/mediterranean-rescue` until Guillaume decides.
+- The project is public at `memolabs-dev/mediterranean-rescue` (decision of 25 October 2026): work on a branch, run `make check`, open a small pull request against `main`. `main` is protected: one approving review and the four CI checks are required, and nobody pushes to it directly. No pull request to `dataforgoodfr/mediterranean-rescue` until Guillaume decides.
+- `make dev` starts the whole stack in training mode with fictional data; never point it at real exports to "test with real data".
+- Agents work one branch and one pull request at a time, and the pull request says that an AI tool was used.
 - Every green commit on `main` publishes the image that https://rescue.memolabs.dev runs within minutes: `main` is production.

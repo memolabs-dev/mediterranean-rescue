@@ -17,7 +17,15 @@ L’existant [CartONG/SOSMedDashboard](https://github.com/CartONG/SOSMedDashboar
 
 ## Démarrer en local
 
-Prérequis : Docker Desktop/Engine avec Compose, Node 24+, pnpm 12.10.1, Python 3.12+ pour le petit script de configuration. Pas de base de données, de GDAL ou de SDK à installer sur l’hôte.
+Première fois ? Le [guide d’accueil](BIENVENUE.md) explique tout pas à pas. En bref, avec Docker, make et Python 3 :
+
+```sh
+make dev
+```
+
+Interface : http://127.0.0.1:5173/, espace équipe : http://127.0.0.1:5173/workspace. Backend : http://127.0.0.1:8010/api/v1/events/. Un `.env` neuf démarre en mode `training`, avec cinq opérations fictives et le compte local `local-team` connecté automatiquement. Le mode production de données et le mode d’entraînement sont explicitement séparés par DATA_MODE. Aucun événement réel ne doit être étiqueté fictif pour contourner cette séparation.
+
+Les mêmes étapes à la main, avec le frontend sur l’hôte (Node 24+, pnpm 12.10.1) :
 
 ```sh
 python3 scripts/init_local.py
@@ -30,9 +38,7 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Interface : http://127.0.0.1:5173/. Backend : http://127.0.0.1:8010/api/v1/events/. La base initiale est vide, sans exemple synthétique chargé automatiquement. Le mode production de données et le mode d’entraînement sont explicitement séparés par DATA_MODE. Aucun événement réel ne doit être étiqueté fictif pour contourner cette séparation.
-
-Le script crée .env avec permissions privées, sans afficher ses secrets ni remplacer un fichier existant. Ne pas le committer. La base n’a pas de port publié ; seul l’API est accessible sur l’interface locale. L’image PostGIS officielle amd64 est exécutée sous émulation sur Mac ARM. Les volumes persistent entre redémarrages ; ne pas les supprimer pour résoudre une erreur.
+Le script crée .env avec permissions privées, sans afficher ses secrets ni remplacer un fichier existant. Ne pas le committer. La base n’a pas de port publié ; seuls l’API et le frontend sont accessibles sur l’interface locale. L’image PostGIS officielle amd64 est exécutée sous émulation sur Mac ARM. Les volumes persistent entre redémarrages ; ne pas les supprimer pour résoudre une erreur.
 
 ## Administration et publication
 
