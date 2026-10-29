@@ -37,6 +37,24 @@ services:
     depends_on:
       db:
         condition: service_healthy
+  # The Vite dev server for `make dev`, so Docker is the only thing to install. Running pnpm on
+  # the host instead (`cd frontend && pnpm dev`) still works against the `api` port above.
+  web:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.web
+    command: ["sh", "-c", "pnpm install --frozen-lockfile && pnpm exec vite --host 0.0.0.0"]
+    environment:
+      API_TARGET: http://api:8000
+      npm_config_store_dir: /pnpm-store
+    ports: ["127.0.0.1:5173:5173"]
+    volumes:
+      - ./frontend:/app/frontend
+      - ./contracts:/app/contracts:ro
+      - frontend_node_modules:/app/frontend/node_modules
+      - pnpm_store:/pnpm-store
+    depends_on:
+      - api
   # The two scheduled readers, opt-in: `docker compose --profile sync up -d`. Each loops and
   # records every pass in the database (SheetSync); the team space shows the last result.
   sync-sheets:
@@ -74,3 +92,5 @@ services:
         condition: service_healthy
 volumes:
   rescue_pg17_postgis36:
+  frontend_node_modules:
+  pnpm_store:

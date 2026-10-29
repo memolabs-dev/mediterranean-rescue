@@ -13,9 +13,10 @@ export default defineConfig({
     allowedHosts: process.env.DEV_ALLOWED_HOSTS?.split(",").filter(Boolean) ?? [],
     port: 5173,
     strictPort: true,
-    // API_TARGET lets a second local backend (another branch) serve the dev frontend.
-    // String targets set changeOrigin, which rewrites Host but keeps Origin: the backend must
-    // list the dev origin in CSRF_TRUSTED_ORIGINS or every write fails its CSRF check.
+    // API_TARGET lets another backend serve the dev frontend: a second branch, or the `api`
+    // service when `make dev` runs this server in Docker. String targets set changeOrigin,
+    // which rewrites Host to the target, so the backend must accept that host name
+    // (DJANGO_ALLOWED_HOSTS) and list the dev origin in CSRF_TRUSTED_ORIGINS.
     proxy: {
       "/api": process.env.API_TARGET ?? "http://127.0.0.1:8010",
       "/admin": process.env.API_TARGET ?? "http://127.0.0.1:8010",

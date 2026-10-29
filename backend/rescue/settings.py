@@ -96,6 +96,7 @@ if LOCAL_AUTO_LOGIN:
         MIDDLEWARE.index("django.contrib.auth.middleware.AuthenticationMiddleware") + 1,
         "rescue.middleware.LocalAutoLogin",
     )
+TEST_RUNNER = "rescue.test_runner.HermeticRunner"
 ROOT_URLCONF = "rescue.urls"
 TEMPLATES = [
     {
