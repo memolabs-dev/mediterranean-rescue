@@ -51,6 +51,8 @@ services:
     volumes:
       - ./frontend:/app/frontend
       - ./contracts:/app/contracts:ro
+      # The design-token test compares the app's tokens with docs/design/tokens.css.
+      - ./docs:/app/docs:ro
       - frontend_node_modules:/app/frontend/node_modules
       - pnpm_store:/pnpm-store
     depends_on:
