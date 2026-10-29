@@ -1,0 +1,5 @@
+# Development only: the Vite dev server for `make dev`, so a contributor needs Docker and nothing
+# else. Same Node and pnpm versions as the production image (Dockerfile).
+FROM node:26-bookworm-slim
+RUN npm install --global pnpm@12.10.1
+WORKDIR /app/frontend

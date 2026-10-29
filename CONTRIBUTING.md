@@ -2,6 +2,8 @@
 
 Thanks for helping. Volunteers of any background are welcome: code, data checking, translation, design, testing on a phone.
 
+First time here? The [welcome guide (French)](docs/BIENVENUE.md) takes you from cloning to your first pull request.
+
 ## Before you start
 
 - Read [AGENTS.md](AGENTS.md): it holds the conventions every contributor follows, human or agent.
@@ -18,10 +20,20 @@ Thanks for helping. Volunteers of any background are welcome: code, data checkin
 
 ## Workflow
 
-1. Fork, create a branch from `main`.
-2. Run the stack locally ([README](README.md#run-it-locally)).
+1. Fork, create a branch from `main`: one branch per task.
+2. Run the stack locally with `make dev` ([README](README.md#run-it-locally)).
 3. Write the test first when behaviour changes; keep the suite green.
-4. Open a pull request against `main` and fill in the template. CI must be green.
+4. Run `make check`, then open a pull request against `main` and fill in the template. Keep it small: one pull request, one purpose.
+
+`main` is protected, because every commit on it is deployed to <https://rescue.memolabs.dev>:
+
+- nobody pushes to `main` directly, maintainers included;
+- a pull request needs one approving review, resolved review threads, and the four CI checks green: *Python lint*, *Tests, contract and build*, *End-to-end on the production image*, *Production image*;
+- pull requests are squash-merged and their branch is deleted.
+
+### AI tools
+
+Using one is optional. If you do, say so in the pull request template, review every line before pushing (you remain the author), and keep [AGENTS.md](AGENTS.md) unchanged in a task's pull request: propose changes to it in a pull request of their own.
 
 ### Contract
 
@@ -31,6 +43,8 @@ cd frontend && pnpm codegen
 ```
 
 ### Checks
+
+`make check` runs them in Docker, with Django's deployment checks and the OpenAPI contract comparison; CI adds the browser tests and the production image. The main commands, one by one:
 
 ```sh
 docker compose run --rm api uv run --no-sync python backend/manage.py test catalog.tests --noinput

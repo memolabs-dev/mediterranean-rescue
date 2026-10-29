@@ -31,7 +31,11 @@ jobs:
       - name: Install package manager
         run: npm install --global pnpm@12.10.1
       - name: Prepare isolated environment
-        run: python3 scripts/init_local.py
+        # A new .env is made for `make dev` (training data, automatic sign-in); CI checks the
+        # production data path, and the deployment check refuses automatic sign-in.
+        run: |
+          python3 scripts/init_local.py
+          sed -i -e 's/^DATA_MODE=training$/DATA_MODE=production/' -e '/^LOCAL_AUTO_LOGIN=/d' .env
       - name: Build backend and database
         run: docker compose build
       - name: Backend integration tests on PostGIS
@@ -61,7 +65,9 @@ jobs:
 
   e2e:
     name: End-to-end on the production image
-    runs-on: ubuntu-latest
+    # Pinned: on ubuntu-latest (Ubuntu 26.04, observed 29 October 2026) Playwright 1.64's WebKit fails to
+    # start, missing libicudata.so.74 from Ubuntu 24.04. Move on when Playwright supports 26.04.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: docker/setup-buildx-action@v4

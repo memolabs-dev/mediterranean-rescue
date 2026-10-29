@@ -7,6 +7,8 @@ Rescue operations at sea, documented with their source. Mediterranean Rescue bri
 
 **Demo:** <https://rescue.memolabs.dev>
 
+**New here?** Start with the [welcome guide (French)](docs/BIENVENUE.md): from cloning to your first pull request, with Docker as the only requirement.
+
 This is an independent volunteer project, started from the [Data for Good](https://dataforgood.fr/) repository [dataforgoodfr/mediterranean-rescue](https://github.com/dataforgoodfr/mediterranean-rescue). It is not the official website of SOS MEDITERRANEE; the reference map of its operations is [map.sosmediterranee.org](https://map.sosmediterranee.org/).
 
 ## What it does
@@ -23,28 +25,23 @@ Django 5.2 LTS, Django REST Framework and drf-spectacular (OpenAPI contract in [
 
 ## Run it locally
 
-Requirements: Docker with Compose, Node 24 and pnpm 12.10.1, Python 3.12+ (only for the setup script).
+Requirements: Docker with Compose, make, Python 3 (only for the script that writes `.env`).
 
 ```sh
-python3 scripts/init_local.py          # writes a private .env with random secrets
-docker compose build
-docker compose up -d db
-docker compose run --rm api uv run --no-sync python backend/manage.py migrate --noinput
-docker compose up -d api
-cd frontend && pnpm install --frozen-lockfile && pnpm dev
+make dev
 ```
 
-Open <http://127.0.0.1:5173/>. The database starts empty. To read the public logbook: `docker compose run --rm api uv run --no-sync python backend/manage.py sync_logbook`. To open the team space, create an account with `createsuperuser` (or see `LOCAL_AUTO_LOGIN` in [`.env.example`](.env.example)).
+Open <http://127.0.0.1:5173/> for the public site and <http://127.0.0.1:5173/workspace> for the team space, where you are signed in as `local-team`. A new `.env` starts in training mode: five fictional operations, no real data. `make help` lists the other commands.
+
+To read the real public logbook instead, set `DATA_MODE=production` in `.env`, remove the `LOCAL_AUTO_LOGIN` line (otherwise the local account, which can publish, stays signed in on real data) and run `docker compose run --rm api uv run --no-sync python backend/manage.py sync_logbook`. Running the frontend on the host (`cd frontend && pnpm dev`, Node 24+ and pnpm 12.10.1) still works against the API on port 8010.
 
 ## Tests
 
 ```sh
-docker compose run --rm api uv run --no-sync python backend/manage.py test catalog.tests --noinput
-cd frontend && pnpm lint && pnpm typecheck && pnpm test && pnpm build
-uv run ruff check backend scripts && uv run ruff format --check backend scripts
+make check
 ```
 
-CI runs all of it on every pull request, plus the migration check, Django's deployment checks, the OpenAPI contract (regenerated and compared) and the production image build ([`.github/workflows/ci.yaml`](.github/workflows/ci.yaml)).
+It runs, in Docker: Ruff, the backend tests on PostGIS, the migration check, Django's deployment checks, the OpenAPI contract (regenerated and compared), and the frontend lint, type check, unit tests and build. CI runs the same on every pull request, plus the browser tests and the production image build ([`.github/workflows/ci.yaml`](.github/workflows/ci.yaml)).
 
 ## Deploy
 
