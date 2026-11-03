@@ -25,7 +25,7 @@ function readLabelId(pathname: string) {
   return id && LABEL_ID.test(id) ? id : null;
 }
 
-// Parcours C: W06 (names to read) with W07 (read one name) beside it on wide screens.
+// Port flow: names to read, with the reading of one name beside it on wide screens.
 export function PortsWorkspace() {
   const { t } = useI18n();
   const { pathname } = useLocation();

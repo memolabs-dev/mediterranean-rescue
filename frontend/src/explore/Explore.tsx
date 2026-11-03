@@ -266,7 +266,7 @@ export function Explore({ audience = "public" }: { audience?: "public" | "team" 
             <p>{t("app.lead")}</p>
           </div>
 
-          {/* Fictitious data is said before anything else, on a phone too (product audit, P0). */}
+          {/* Fictitious data is said before anything else, on a phone too (product audit). */}
           {trainingData && (
             <div className="notice-preview" role="status">
               <Icon name="alert" size={18} />

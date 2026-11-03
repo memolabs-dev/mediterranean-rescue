@@ -1,4 +1,4 @@
-/* Tables, facets, search and the private review workspace (UI1). */
+/* Tables, facets, search and the private review workspace. */
 .ui-table { overflow-x: auto; }
 .ui-table table { width: 100%; border-collapse: collapse; font-size: var(--type-label-size); }
 .ui-table caption { text-align: left; font-weight: var(--type-label-weight); padding: var(--space-2) 0; }

@@ -19,7 +19,7 @@ export interface FilterBarProps<V extends string> {
   children?: ReactNode;
 }
 
-// Exclusive facets applied immediately, each with its server count (contract C16).
+// Exclusive facets applied immediately, each with its server count (FilterBar contract).
 export function FilterBar<V extends string>({ legend, facets, value, onValueChange, children }: FilterBarProps<V>) {
   const { number } = useI18n();
   return (

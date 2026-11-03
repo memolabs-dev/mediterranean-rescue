@@ -219,7 +219,7 @@ class IdentityTests(CrosswalkTestCase):
         self.assertEqual(kinds(propose_links(doubled)), ["candidates", "repeat"])
 
     def test_a_row_copied_twice_in_the_sheet_is_never_counted_twice(self):
-        # Acceptance of 24 October 2026, D4: the copy stayed "looks new" and could not be decided.
+        # Acceptance of 24 October 2026: the copy stayed "looks new" and could not be decided.
         snapshot, _ = self.stage(ops_csv(ops_row(), ops_row(date="07/02/2024"), ops_row()))
         proposals = propose_links(snapshot)
         self.assertEqual(kinds(proposals), ["new", "new", "repeat"])

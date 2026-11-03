@@ -1,4 +1,4 @@
-"""Offline Sheets diagnostic (D1-D5). Synthetic inputs only; no database is used.
+"""Offline Sheets diagnostic. Synthetic inputs only; no database is used.
 
 Plain unittest so it runs both under the Django runner in CI and with
 `python3 -m unittest` from backend/ on a host without Docker.
@@ -91,7 +91,7 @@ class ContractTests(unittest.TestCase):
 
 
 class StructureTests(unittest.TestCase):
-    """D1: explicit columns, drift reported, received cells kept."""
+    """Explicit columns, drift reported, received cells kept."""
 
     def test_duplicate_header_blocks_mapping_but_keeps_raw_cells(self):
         content = (
@@ -165,7 +165,7 @@ class StructureTests(unittest.TestCase):
 
 
 class NormalizationTests(unittest.TestCase):
-    """D2: dates, numbers, coordinates and links without invented values."""
+    """Dates, numbers, coordinates and links without invented values."""
 
     def test_dates(self):
         self.assertEqual(parse_date("29/02/2024", "DD/MM/YYYY"), "2024-02-29")
@@ -438,7 +438,7 @@ class ReportLanguageTests(unittest.TestCase):
 
 
 class ProvenanceTests(unittest.TestCase):
-    """D3: exact provenance, determinism, no merge, no inferred identity."""
+    """Exact provenance, determinism, no merge, no inferred identity."""
 
     def test_bom_multiline_cell_and_physical_lines(self):
         result = diagnose((FIXTURES / "synthetic-Other_data.csv").read_bytes(), "Other_data")
@@ -488,7 +488,7 @@ class ProvenanceTests(unittest.TestCase):
 
 
 class BoundsTests(unittest.TestCase):
-    """D4: bounded input, never a pretended complete read."""
+    """Bounded input, never a pretended complete read."""
 
     def test_invalid_utf8_and_too_large(self):
         result = diagnose(b"date\n\xff\n", "Data_operations")
@@ -533,7 +533,7 @@ SENTINELS = ("Témoin-sentinelle-XYZ", "https://example.org/sentinel-url", "Port
 
 
 class CliTests(unittest.TestCase):
-    """D4/D5: private bounded CLI, no overwrite, no source value outside private files."""
+    """Private bounded CLI, no overwrite, no source value outside private files."""
 
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -681,7 +681,7 @@ class CliTests(unittest.TestCase):
 
 
 class SyntheticDemonstrationTests(unittest.TestCase):
-    """D5: the three labelled fixtures trigger their intentional anomalies."""
+    """The three labelled fixtures trigger their intentional anomalies."""
 
     def test_operations_fixture(self):
         result = diagnose(

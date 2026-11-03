@@ -20,12 +20,12 @@ import { TextField } from "../ui/TextField";
 const STATUSES: readonly Status[] = ["blocked", "needsReview", "linked", "draft", "published", "withdrawn", "unknown", "training"];
 type Decision = "create" | "link" | "later";
 
-// Internal development page listing the reusable components with their states (UI0).
+// Internal development page listing the reusable components with their states (ADR 0008).
 export default function Catalog() {
   const { t, locale, setLocale } = useI18n();
   const d = useDevText();
   const [reason, setReason] = useState("");
-  // Errors appear after the field is left or the form submitted, not on arrival (C02).
+  // Errors appear after the field is left or the form submitted, not on arrival (TextField contract).
   const [reasonTouched, setReasonTouched] = useState(false);
   const [kind, setKind] = useState<Kind | "">("");
   const [decision, setDecision] = useState<Decision | null>(null);

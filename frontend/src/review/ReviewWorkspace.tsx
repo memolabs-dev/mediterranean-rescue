@@ -32,7 +32,7 @@ function readRoute(pathname: string) {
     : null;
 }
 
-// W04 (review queue) with W05 (row review) as an inspector on wide screens, a page on narrow ones.
+// Review queue with the row review as an inspector on wide screens, a page on narrow ones.
 export function ReviewWorkspace() {
   const { t } = useI18n();
   const { pathname } = useLocation();
@@ -67,7 +67,7 @@ function ReviewQueue() {
   );
   const carry = api.useMutation("post", "/api/private/v1/review/snapshots/{id}/exact-carries/");
 
-  // Selection is page-scoped and reset whenever the visible page changes (contract C15).
+  // Selection is page-scoped and reset whenever the visible page changes (DataTable contract).
   const pageKey = `${snapshotId}|${status}|${offset}`;
   const [selection, setSelection] = useState<{ key: string; ids: Set<string> }>({ key: pageKey, ids: new Set() });
   // Only rows that are still unchanged carries on this page stay selected (a row decided in the

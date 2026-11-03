@@ -46,7 +46,7 @@ export function RowReview({ rowId, snapshotId, onDecided, onClose }: RowReviewPr
   const alive = useRef(true);
   useEffect(() => {
     // Set again on every mount: React's development double mount runs the cleanup once, and a
-    // flag left false would silently drop every answer (acceptance of 24 October 2026, D1).
+    // flag left false would silently drop every answer (acceptance of 24 October 2026).
     alive.current = true;
     return () => {
       alive.current = false;
