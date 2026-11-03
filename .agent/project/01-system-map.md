@@ -1,1 +1,0 @@
-Voir docs/architecture.md, source canonique du modèle et des choix. Existant : template Python DfG, ancien web statique isolé. Nouveau flux : import local → staging privé → validation/publication → PostGIS → REST → React.
