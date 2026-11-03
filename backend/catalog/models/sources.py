@@ -45,7 +45,7 @@ class Source(UUIDModel):
     def clean(self):
         if self.rights_approved and not self.license_note.strip():
             # Tied to the field: Django then skips the same check of the constraint, so the
-            # message is shown once, next to the box to fill (acceptance of 25 October, L3).
+            # message is shown once, next to the box to fill (acceptance of 25 October).
             raise ValidationError(
                 {
                     "license_note": _(

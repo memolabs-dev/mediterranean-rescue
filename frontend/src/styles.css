@@ -482,7 +482,7 @@ footer p {
   }
 }
 
-/* UI0: brand typeface from the tokens, and a header that wraps with the language picker. */
+/* Brand typeface from the tokens, and a header that wraps with the language picker. */
 body {
   font-family: var(--font-family-sans);
 }

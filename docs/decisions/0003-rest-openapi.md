@@ -14,14 +14,14 @@ GET `/api/v1/schema/` : contrat machine lisible.
 Les listes et détails emploient des projections explicites ; aucun payload de staging, external_id, acteur ou audit public. Les filtres invalides, inconnus et répétés sont refusés (400). Les méthodes d’écriture sont refusées (405), la modification passe par l’admin avec sessions/CSRF.
 
 ## Exigences / acceptation de la tranche
-R-REST-1 : liste, détail, points et preuves exposent seulement les événements publics selon les droits et DATA_MODE ; vérifier brouillons, retrait et révocation.
-R-REST-2 : filtres cohérents, dates/bbox/enum/pagination validés ; vérifier 400, 404, 405, limite carte, budget SQL, absence des champs internes.
-R-REST-3 : OpenAPI validé sans avertissement et types générés déterministes ; mauvais endpoint/champ/paramètre refusé par TypeScript.
-R-REST-4 : interface existante Base UI/MapLibre fonctionne avec le client REST ; chargement, vide, erreur/reprise, filtres et détail conservés.
-R-DOC-1 : document de départ décrit objectifs, inventaire, décisions, périmètre, lots dépendants, critères, risques, exploitation et onboarding ; README lance réellement la stack.
+- Liste, détail, points et preuves exposent seulement les événements publics selon les droits et DATA_MODE ; vérifier brouillons, retrait et révocation.
+- Filtres cohérents, dates/bbox/enum/pagination validés ; vérifier 400, 404, 405, limite carte, budget SQL, absence des champs internes.
+- OpenAPI validé sans avertissement et types générés déterministes ; mauvais endpoint/champ/paramètre refusé par TypeScript.
+- Interface existante Base UI/MapLibre fonctionne avec le client REST ; chargement, vide, erreur/reprise, filtres et détail conservés.
+- Document de départ décrit objectifs, inventaire, décisions, périmètre, lots dépendants, critères, risques, exploitation et onboarding ; README lance réellement la stack.
 
 ## Graphe et vérification
-REST-1 spécifier (ce document) → REST-2 backend/contrat → REST-3 client/UI → REST-4 CI/régressions → REST-5 revue indépendante/document de départ/clôture.
+Étapes : spécifier (ce document), puis backend et contrat, client et interface, CI et régressions, enfin revue indépendante, document de départ et clôture.
 Pas de migration de données nécessaire : changement de transport uniquement. Tests existants d’intégrité/publication/admin/import et réversibilité conservés. Tests HTTP remplacent tests GraphQL. Échantillons synthétiques seulement en tests, base locale réelle laissée vide. Production, connecteur Sheets et autorisations externes restent des lots futurs.
 
 ## Risques et limites

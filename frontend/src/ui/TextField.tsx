@@ -7,7 +7,7 @@ export interface TextFieldProps extends Omit<ComponentProps<typeof Field.Control
   description?: string;
   /**
    * Error to show next to the field; the field is invalid while it is set. Callers show it
-   * after blur or submission, never on arrival in an empty field (contract C02).
+   * after blur or submission, never on arrival in an empty field (TextField contract).
    */
   error?: string | null;
   /** Shows "optional" in the label; required fields are the default in review forms. */

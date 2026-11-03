@@ -11,7 +11,7 @@ export { IMPORTS_PATH } from "./paths";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-// Parcours A: imports list, W02 (add an export), W03 (what the file holds, before and after saving).
+// Import flow: imports list, add an export, then what the file holds, before and after saving.
 export function ImportsWorkspace() {
   const { t } = useI18n();
   const { pathname } = useLocation();

@@ -30,7 +30,7 @@ export interface DataTableProps<T> {
 }
 
 // A semantic table: caption, column headers, a dedicated title control per row, no grid
-// keyboard model. Selection never extends beyond the visible page (contract C15).
+// keyboard model. Selection never extends beyond the visible page (DataTable contract).
 export function DataTable<T>({ caption, columns, rows, rowId, activeId, selection, busy, empty }: DataTableProps<T>) {
   const { t } = useI18n();
   const eligible = selection ? rows.filter(selection.isEligible).map(rowId) : [];

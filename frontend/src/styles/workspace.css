@@ -1,4 +1,4 @@
-/* Private workspace frame, imports (W02, W03) and port names (W06, W07): UI2. */
+/* Private workspace frame, imports and port names. */
 /* Team space header: the navy band of the public site, with the sections as pills under it. */
 .workspace-bar {
   display: grid; gap: var(--space-3); padding: var(--space-3) var(--space-4) var(--space-3);

@@ -111,7 +111,7 @@ describe("access", () => {
   });
 });
 
-describe("queue (W04)", () => {
+describe("queue", () => {
   it("shows counts per facet, rows with a title link, and carries only unchanged rows", async () => {
     const carry = { id: "00000000-0000-0000-0000-0000000000b2", line: 13, occurred_on: "2024-01-19", proposal: "exact_carry" as const, candidate_count: 1 };
     const { calls } = fakeServer({
@@ -155,7 +155,7 @@ describe("queue (W04)", () => {
   });
 });
 
-describe("row review (W05)", () => {
+describe("row review", () => {
   function server(decision: (body: unknown) => { status?: number; body: unknown }) {
     let current = rowDetail();
     return fakeServer({

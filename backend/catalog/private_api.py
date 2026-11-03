@@ -32,12 +32,12 @@ STATUS_BY_PROPOSAL = {
     "exact_carry": "to_review",
     "candidates": "to_review",
     "blocked": "blocked",
-    # A row entered twice in the sheet is fixed there, like an error (acceptance D4).
+    # A row entered twice in the sheet is fixed there, like an error (acceptance of 24 October 2026).
     "repeat": "blocked",
     "linked": "linked",
 }
 STATUSES = ("to_review", "blocked", "linked")
-# Identity review concerns event sheets; Data_ports rows are read as port labels (UI2).
+# Identity review concerns event sheets; Data_ports rows are read as port labels (ADR 0010).
 REVIEW_SHEETS = ("Data_operations", "Other_data")
 ERRORS = {code: ErrorSerializer for code in (400, 401, 403, 404, 405, 409, 429)}
 

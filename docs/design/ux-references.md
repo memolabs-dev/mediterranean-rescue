@@ -17,35 +17,35 @@ Nous retenons les principes de ces sources et l’identité SOS MEDITERRANEE. No
 
 ## Décisions concrètes
 
-### UX-D1 — Deux espaces selon l’intention
+### Deux espaces selon l’intention
 
 Le public explore des événements publiés. L’équipe prépare et examine des données privées. Chacun trouve une navigation adaptée ; l’espace de travail ne devient pas un menu de commandes techniques. Le serveur reste responsable des autorisations.
 
-### UX-D2 — Une prochaine action compréhensible
+### Une prochaine action compréhensible
 
 Une page commence par son objet, son état et une action principale contextualisée. « Examiner les 3 anomalies » est préférable à un bouton « Continuer » sans effet expliqué. La première visite montre une tâche réalisable, pas six graphiques vides.
 
-### UX-D3 — Inspecter sans perdre sa place
+### Inspecter sans perdre sa place
 
 Sur grand écran, une liste et un inspecteur latéral permettent de comparer les informations. L’ouverture garde filtres, page, défilement et sélection. Sur petit écran, le détail devient une page avec un retour qui restaure le contexte. Une décision complexe n’est pas comprimée dans une infobulle.
 
-### UX-D4 — Montrer progressivement, sans masquer l’essentiel
+### Montrer progressivement, sans masquer l’essentiel
 
 Date, type, effectif connu/inconnu et raison de revue apparaissent d’abord. La provenance complète et le contenu brut s’ouvrent à la demande. Les erreurs bloquantes, droits manquants et conséquences de publication restent visibles immédiatement.
 
-### UX-D5 — Sélectionner n’est pas approuver
+### Sélectionner n’est pas approuver
 
 Un filtre, une ligne sélectionnée ou un candidat suggéré ne modifie aucune identité. Les propositions portent un libellé expliquant leur origine. Une validation demande une action humaine et un motif. Les actions groupées ne s’appliquent qu’aux reports exacts éligibles et sont revérifiées côté serveur.
 
-### UX-D6 — Des interactions réactives, un état honnête
+### Des interactions réactives, un état honnête
 
 Filtrer, inspecter, comparer et revenir doivent être rapides. Un changement durable n’est confirmé qu’après réponse serveur. Un indicateur d’attente n’invente pas un pourcentage. Après une réponse réseau incertaine, relire l’état avant de réessayer une écriture.
 
-### UX-D7 — Pas de surprise en explorant la carte
+### Pas de surprise en explorant la carte
 
 Cliquer un résultat localise sa position connue ; cliquer un point ouvre son événement. Déplacer la carte ne change pas silencieusement les résultats : proposer « Rechercher dans cette zone ». Les données sans position restent dans la liste et sont comptées explicitement.
 
-### UX-D8 — Reprendre un travail interrompu
+### Reprendre un travail interrompu
 
 Les décisions enregistrées sont retrouvées côté serveur. Les saisies non soumises restent des brouillons en mémoire, sans promesse de sauvegarde automatique. Une fermeture avec saisie modifiée avertit ; un rechargement peut nécessiter une nouvelle saisie. Aucun contenu brut privé dans l’URL, localStorage ou l’analytique.
 

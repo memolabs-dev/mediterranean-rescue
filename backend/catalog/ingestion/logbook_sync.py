@@ -61,7 +61,7 @@ def logbook_source():
 
 def sheet_last_date():
     """The last operation in the association's sheet, as the team sees how far it lags. Fictitious
-    training sources never count (acceptance of 24 October 2026, D3)."""
+    training sources never count (acceptance of 24 October 2026)."""
     last = None
     for snapshot in current_sheets():
         for value in snapshot.rows.values_list("candidate__occurred_on", flat=True):

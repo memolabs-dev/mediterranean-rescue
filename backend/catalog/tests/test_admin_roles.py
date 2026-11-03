@@ -92,7 +92,7 @@ class CoordinatorTests(TestCase):
         self.assertFalse(volunteer.is_staff)
 
     def test_roles_are_named_in_the_readers_language(self):
-        # Acceptance of 24 October 2026, D7: role names stayed English in the French admin.
+        # Acceptance of 24 October 2026: role names stayed English in the French admin.
         form = self.client.get(
             f"/admin/auth/user/{self.volunteer.pk}/change/", HTTP_ACCEPT_LANGUAGE="fr"
         )

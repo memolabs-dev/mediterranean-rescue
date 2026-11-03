@@ -116,7 +116,7 @@ describe("main screen preview", () => {
     expect(await screen.findByRole("button", { name: "Copy the link to this record" })).toBeTruthy();
     first.unmount();
 
-    // Audit of 24 October 2026, D10: a record could not be linked to.
+    // Audit of 24 October 2026: a record could not be linked to.
     renderApp(<Explore audience="team" />);
     const card = await screen.findByRole("button", { name: /Port fictif/ });
     expect(card.getAttribute("aria-expanded")).toBe("true");

@@ -19,4 +19,4 @@ Aucune écriture, aucun événement créé, aucune publication. L'API publique r
 1. Lire les 53 noms de ports : la fiche et la carte montrent alors le port réel de débarquement.
 2. Écran principal : couleur des points par état, filtre par état, fiche plus riche (photos et témoignages cités par la source).
 3. Revue en langage simple, depuis la fiche (« Vérifier cette ligne »).
-4. Brouillons d'événements (UI3), puis publication contrôlée quand l'association l'aura décidé.
+4. Brouillons d'événements, puis publication contrôlée quand l'association l'aura décidé.

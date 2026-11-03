@@ -23,8 +23,8 @@ Un brouillon existant n'est jamais écrasé : une ligne corrigée produit `revis
 Révisions d'un brouillon existant, preuves documentaires, rattachement voyage et navire, interface de revue (application React).
 
 ## Critères d'acceptation
-- AC-D1 : brouillons créés avec les bons champs, statut `draft`, invisibles dans l'API publique, aucun audit de publication.
-- AC-D2 : deuxième passage sans doublon (`already_drafted`) ; ligne corrigée `revision_needed` sans écrasement.
-- AC-D3 : effectifs incohérents écartés et listés ; décès jamais copiés vers `people` ; inconnus restés `null`.
-- AC-D4 : port rempli seulement pour une lecture vers un seul port ; Data_ports refusé ; permission et motif exigés.
-- AC-D5 : publication toujours soumise à `set_publication` (droits de la source) ; régressions socle, diagnostic et correspondances vertes.
+- Brouillons créés avec les bons champs, statut `draft`, invisibles dans l'API publique, aucun audit de publication.
+- Deuxième passage sans doublon (`already_drafted`) ; ligne corrigée `revision_needed` sans écrasement.
+- Effectifs incohérents écartés et listés ; décès jamais copiés vers `people` ; inconnus restés `null`.
+- Port rempli seulement pour une lecture vers un seul port ; Data_ports refusé ; permission et motif exigés.
+- Publication toujours soumise à `set_publication` (droits de la source) ; régressions socle, diagnostic et correspondances vertes.

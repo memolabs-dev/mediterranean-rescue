@@ -124,16 +124,16 @@ Les charges ci-dessous sont des ordres de grandeur de développement effectif, h
 
 | Lot | Livrable | Dépendance | Critère de sortie | Charge indicative |
 | --- | --- | --- | --- | --- |
-| L0 : fondation REST | Dépôt, modèles, admin, import local, API typée, carte/liste, CI | Décision de stack | Tests/contrat/build verts et parcours local vérifié | Socle vérifié, recette humaine ouverte |
-| L1 : contrat de données | Propriétaires, licences, dictionnaire signé, petit jeu autorisé, règles de comptage | Validation SOS/DfG | Une personne identifiée approuve les champs et leur usage | 2–4 jours + échanges |
-| L2 : reprise Sheets | Snapshots, adaptateur des 3 onglets, crosswalk, alias, rapport d’anomalies | L1 | Réimport sans doublon, rapprochements revus, comptages réconciliés | 5–8 jours |
-| L3 : voyages et enrichissement | Entrées de journal, relations et révisions sourcées | L2 | Un voyage choisi est traçable de bout en bout, ambiguïtés visibles | 4–7 jours |
-| L4 : parcours éditorial | Filtres partageables, emprise carte, fiches, sources, accessibilité | L2, retours utilisateurs | Recette sur données autorisées, clavier/mobile et absence de WebGL | 5–8 jours |
-| L5 : exploitation | Hébergement, accès, TLS, restauration, supervision et passation | L1–L4 | Restauration exercée, responsable nommé et recette associative | 4–7 jours |
+| Fondation REST | Dépôt, modèles, admin, import local, API typée, carte/liste, CI | Décision de stack | Tests/contrat/build verts et parcours local vérifié | Socle vérifié, recette humaine ouverte |
+| Contrat de données | Propriétaires, licences, dictionnaire signé, petit jeu autorisé, règles de comptage | Validation SOS/DfG | Une personne identifiée approuve les champs et leur usage | 2–4 jours + échanges |
+| Reprise des Sheets | Snapshots, adaptateur des 3 onglets, crosswalk, alias, rapport d’anomalies | Contrat de données | Réimport sans doublon, rapprochements revus, comptages réconciliés | 5–8 jours |
+| Voyages et enrichissement | Entrées de journal, relations et révisions sourcées | Reprise des Sheets | Un voyage choisi est traçable de bout en bout, ambiguïtés visibles | 4–7 jours |
+| Parcours éditorial | Filtres partageables, emprise carte, fiches, sources, accessibilité | Reprise des Sheets, retours utilisateurs | Recette sur données autorisées, clavier/mobile et absence de WebGL | 5–8 jours |
+| Exploitation | Hébergement, accès, TLS, restauration, supervision et passation | Tous les lots précédents | Restauration exercée, responsable nommé et recette associative | 4–7 jours |
 
-À 6–7 heures par semaine pour une seule personne, ces lots représentent plusieurs mois. Un calendrier précis attend la disponibilité réelle de l’équipe. L’axe critique est L1 → L2 → validation métier → mise en service, pas la multiplication de fonctionnalités.
+À 6–7 heures par semaine pour une seule personne, ces lots représentent plusieurs mois. Un calendrier précis attend la disponibilité réelle de l’équipe. L’axe critique va du contrat de données à la reprise des Sheets, puis à la validation métier et à la mise en service, pas la multiplication de fonctionnalités.
 
-### Prochaines tâches après L0
+### Prochaines tâches après la fondation REST
 
 1. Identifier le responsable métier et l’actualisateur des Sheets ; confirmer la mission et la place de CartONG. Sortie : compte rendu et décisions, pas un accord supposé.
 2. Obtenir un extrait autorisé couvrant sauvetage, transfert, position absente, compte inconnu et correction. Sortie : contrat de champs/version et règles de conservation.
@@ -157,7 +157,7 @@ Indicateurs utiles : fraîcheur des sources, anomalies ouvertes, lots importés/
 
 Un seul dépôt, pas un nouveau fork à chaque lot. Les contributions partent de branches courtes et sont proposées en PR. main ne sera pas remplacée par notre branche sans revue. Le lien upstream reste conservé. On ne copie pas du code CartONG ou des composants Memo Orbit sans vérifier leur droit de réutilisation ; Base UI est une dépendance directe du projet.
 
-Structure : backend/catalog pour le domaine et l’API, backend/rescue pour la configuration, frontend/src pour l’interface, contracts pour OpenAPI, docs pour les décisions et données, infra pour le packaging, scripts pour les contrôles et .agent/project pour état/preuves. web conserve seulement l’ancien démonstrateur historique.
+Structure : backend/catalog pour le domaine et l’API, backend/rescue pour la configuration, frontend/src pour l’interface, contracts pour OpenAPI, docs pour les décisions et données, infra pour le packaging, scripts pour les contrôles. web conserve seulement l’ancien démonstrateur historique.
 
 Le [README](../README.md) contient le démarrage reproductible. La première tâche d’un bénévole doit pouvoir être testée sans compte d’association ni copie complète des données. Les fixtures de tests sont synthétiques et identifiées. Les décisions qui changent le modèle ou le contrat reçoivent un ADR court.
 
@@ -165,18 +165,18 @@ Le [README](../README.md) contient le démarrage reproductible. La première tâ
 
 | Risque / inconnue | Conséquence | Réponse et gate |
 | --- | --- | --- |
-| Droits et responsabilité de publication non confirmés | Impossible de lancer publiquement les données réelles | L1 requis avant reprise et publication |
+| Droits et responsabilité de publication non confirmés | Impossible de lancer publiquement les données réelles | Contrat de données requis avant reprise et publication |
 | Identités instables et corrections historiques | Doublons ou événements mal reliés | Crosswalk revu, snapshots et anomalies |
 | Comptages non comparables | Chiffres publics trompeurs | Définitions métier, null conservé, aucune somme de personnes uniques |
 | Équipe et charge inconnues | Planning irréaliste et maintenance fragile | Confirmer disponibilité, réduire périmètre, tâches reprises par plusieurs personnes |
 | Couche géographique non qualifiée | Frontière ou contexte erroné | Auteur/licence/date avant activation |
-| Hébergement et identité sans propriétaire | Service impossible à maintenir | Décision explicite et passation avant L5 |
+| Hébergement et identité sans propriétaire | Service impossible à maintenir | Décision explicite et passation avant l’exploitation |
 | Volume supérieur au prototype de contrat | Troncature carte ou latence | Limites visibles, mesure, puis agrégation/tuiles si nécessaire |
 
 Ces points bloquent les lots concernés et la mise en service. Ils ne bloquent pas le développement du socle ni ses tests indépendants.
 
 ## 12. Ce qui permet de dire qu’un lot est prêt
 
-Une tâche est vérifiée avec une preuve associée. Le socle peut atteindre READY_FOR_MANUAL_ACCEPTANCE quand ses tests et son parcours local passent ; cela ne signifie pas que le produit ou la mission associative est terminé. La recette humaine tranche l’adéquation de l’expérience et du périmètre. La mise en service attend les droits, les données réconciliées, la restauration et un propriétaire d’exploitation.
+Une tâche est vérifiée avec une preuve associée. Le socle est prêt pour la recette humaine quand ses tests et son parcours local passent ; cela ne signifie pas que le produit ou la mission associative est terminé. La recette humaine tranche l’adéquation de l’expérience et du périmètre. La mise en service attend les droits, les données réconciliées, la restauration et un propriétaire d’exploitation.
 
-Références canoniques : [inventaire](data-catalog.md), [architecture](architecture.md), [décision REST](decisions/0003-rest-openapi.md), [graphe de travail](../.agent/project/04-work-graph.md), [preuves](../.agent/project/07-evidence.md), [état](../.agent/project/state.json). Les contacts et messages préparés hors du dépôt ne sont pas des prises de contact effectuées.
+Références canoniques : [inventaire](data-catalog.md), [architecture](architecture.md), [décision REST](decisions/0003-rest-openapi.md). Les contacts et messages préparés hors du dépôt ne sont pas des prises de contact effectuées.
