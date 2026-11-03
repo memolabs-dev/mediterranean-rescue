@@ -1,0 +1,65 @@
+name: Volunteer ticket
+description: A task small enough for one volunteer, ready to start (tech leads only)
+labels: [first-ticket]
+projects: ["memolabs-dev/4"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A ticket is ready when every required field below is filled. If one cannot be filled yet, keep the work in its `need` issue instead.
+        Label it `first-ticket` (a first contribution) or `confirmed` (someone who knows the codebase).
+  - type: input
+    id: need
+    attributes:
+      label: Need issue
+      description: The need this ticket comes from, for example "#82".
+    validations:
+      required: true
+  - type: textarea
+    id: who
+    attributes:
+      label: Who it is for, and what they will be able to do
+      description: Name the user (public visitor, journalist, SOS team, reviewer) and the change they will see.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Checkable statements. Each one becomes a test or a manual check written in the pull request.
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: Fictitious data provided
+      description: The fixtures or sample rows to use, labelled as fictitious. Never real SOS records.
+    validations:
+      required: true
+  - type: textarea
+    id: files
+    attributes:
+      label: Where to start
+      description: Files, models or pages concerned.
+    validations:
+      required: true
+  - type: dropdown
+    id: size
+    attributes:
+      label: Size
+      options:
+        - Half a day or less
+        - One day at most
+    validations:
+      required: true
+  - type: checkboxes
+    id: ready
+    attributes:
+      label: Definition of ready
+      options:
+        - label: Nothing blocks it (no missing access, decision or data from SOS)
+          required: true
+        - label: It touches no personal, unpublished or sensitive data
+          required: true
