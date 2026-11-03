@@ -17,8 +17,8 @@ Un export plus récent peut corriger une ligne déjà convertie en brouillon : e
 Révisions d'un événement publié sans retrait, fusion ou scission d'identités, interface de revue (application React).
 
 ## Critères d'acceptation
-- AC-R1 : changements exacts proposés ; application qui met à jour le brouillon, déplace la ligne d'origine, trace la décision, ne publie rien.
-- AC-R2 : modification manuelle en conflit refusée avec les champs nommés ; modification manuelle hors révision conservée.
-- AC-R3 : événement publié refusé ; événement retiré révisé et resté retiré.
-- AC-R4 : refus tracé, même contenu ensuite `revision_rejected`, contenu nouveau de nouveau proposé.
-- AC-R5 : effectifs incohérents, export ancien, ligne sans révision, permission ou motif manquants refusés ; régressions vertes.
+- Changements exacts proposés ; application qui met à jour le brouillon, déplace la ligne d'origine, trace la décision, ne publie rien.
+- Modification manuelle en conflit refusée avec les champs nommés ; modification manuelle hors révision conservée.
+- Événement publié refusé ; événement retiré révisé et resté retiré.
+- Refus tracé, même contenu ensuite `revision_rejected`, contenu nouveau de nouveau proposé.
+- Effectifs incohérents, export ancien, ligne sans révision, permission ou motif manquants refusés ; régressions vertes.

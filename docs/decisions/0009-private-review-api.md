@@ -1,6 +1,6 @@
-# ADR 0009 : API privée de revue (UI1)
+# ADR 0009 : API privée de revue
 
-Statut : accepté par Guillaume le 24 octobre 2026 (« d'abord le contrat des API privées de revue : sessions, CSRF, permissions, erreurs »). Dépend des ADR 0003, 0005 et 0008, et des parcours W04 et W05 de `docs/design/user-flows.md`.
+Statut : accepté par Guillaume le 24 octobre 2026 (« d'abord le contrat des API privées de revue : sessions, CSRF, permissions, erreurs »). Dépend des ADR 0003, 0005 et 0008, et des écrans « File de revue » et « Examiner une ligne » de `docs/design/user-flows.md`.
 
 ## Principes
 - Préfixe `/api/private/v1/`, URL en anglais, distinct de l'API publique `/api/v1/` qui reste sans authentification et inchangée.
@@ -41,4 +41,4 @@ Même enveloppe que l'API publique, `{code, detail, errors?}`, avec des codes ex
 « Examiner plus tard » n'appelle aucune API : rien n'est créé.
 
 ## Hors périmètre
-Import et diagnostic HTTP (UI2), ports (UI2), brouillons et révisions (UI3), création de comptes et réinitialisation de mot de passe.
+Import et diagnostic HTTP, ports (ADR 0010), brouillons et révisions, création de comptes et réinitialisation de mot de passe.

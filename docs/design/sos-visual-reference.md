@@ -72,7 +72,6 @@ Le relevé de marque ci-dessus alimente maintenant la [spécification du systèm
 - [Guide à la racine](../../DESIGN.md) : point d’entrée pour tout agent qui prépare une interface.
 - [Couleurs et rôles JSON](tokens.json) : valeurs de marque observées, rôles proposés et provenance.
 - [Variables CSS de référence](tokens.css) : palette, rôles sémantiques et famille typographique, sans dépendance.
-- [Portée et vérifications de l’intégration](integration.md).
 
 Les variables sont prêtes à reprendre lors de la tranche interface. Ce fichier CSS n’est pas importé dans le frontend existant : aucune modification d’écran n’est effectuée par cette intégration documentaire. Les polices ne sont pas embarquées ni chargées automatiquement ; leur chargement explicite reste à traiter au lot UI. Les noms de variables et rôles du projet ne constituent pas des tokens officiels de l’association.
 

@@ -11,7 +11,6 @@ Ce fork est une contribution en cours. Son périmètre et sa future adoption doi
 - [Inventaire réel des sources et dictionnaire des trois onglets](data-catalog.md)
 - [Décision REST et typage backend/frontend](decisions/0003-rest-openapi.md)
 - [La donnée d’abord : diagnostic hors ligne des exports Sheets](decisions/0004-data-first.md)
-- [Suivi et preuves](../.agent/project/state.json)
 
 L’existant [CartONG/SOSMedDashboard](https://github.com/CartONG/SOSMedDashboard) a une carte et des données Sheets accessibles. Sa licence et les droits de republication des données ne sont pas établis. Aucun code ou dataset CartONG n’a été recopié dans cette plateforme. Le fond Natural Earth est du domaine public ; la provenance est conservée dans web/PROVENANCE.md.
 

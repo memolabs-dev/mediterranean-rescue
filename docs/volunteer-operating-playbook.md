@@ -47,10 +47,12 @@ Responsable : à attribuer. Estimation : h effectives (pas délai).
 Relecteur : à attribuer. Décision externe requise : oui/non.
 ```
 
-**P0** : sécurité, intégrité de données ou démonstration indispensable bloquée.  
-**P1** : résultat du premier lot validé par le projet, à fournir rapidement.  
-**P2** : qualité d'usage et ergonomie fondée sur un problème mesurable.  
-**P3** : amélioration optionnelle, après P0/P1 et accord sur le périmètre.
+Ordre de priorité :
+
+- **D'abord** : sécurité, intégrité de données ou démonstration indispensable bloquée.
+- **Ensuite** : résultat du premier lot validé par le projet, à fournir rapidement.
+- **Plus tard** : qualité d'usage et ergonomie fondée sur un problème mesurable.
+- **Si le temps le permet** : amélioration optionnelle, une fois les deux premiers niveaux traités et le périmètre accepté.
 
 ## 3. Proposition de répartition à deux bénévoles (à valider)
 

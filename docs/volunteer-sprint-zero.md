@@ -33,11 +33,11 @@ Première preuve proposée, **sans données réelles** : une opération fictive 
 
 | Ordre | Ticket | Livrable vérifiable | Charge indicative | Attribution proposée |
 | --- | --- | --- | --- | --- |
-| P0 | [#45](https://github.com/memolabs-dev/mediterranean-rescue/issues/45) | Parcours authentifié vérifié par navigateur en base fictive, rôles distincts, preuves | 3–5 h | Tech lead / test |
-| P0 | [#46](https://github.com/memolabs-dev/mediterranean-rescue/issues/46) | Marqueur mobile réellement rendu et cliquable (test WebKit fait), validation sur vrai téléphone encore ouverte | 1–2 h | Front / QA |
-| P1 | [#48](https://github.com/memolabs-dev/mediterranean-rescue/issues/48) | Décisions A/B/C, sources, responsables, droits et premier résultat | 2–4 h | Tech lead + PO/SOS |
-| P1 | [#57](https://github.com/memolabs-dev/mediterranean-rescue/issues/57) | Exemple d'export CartONG depuis données fictives, mapping + non-régression | 3–5 h | Bénévole données |
-| P1 | [#58](https://github.com/memolabs-dev/mediterranean-rescue/issues/58) | Méthode de rapprochement logbook / Sheets avec cas synthétiques | 3–5 h | Bénévole ingestion |
+| D'abord | [#45](https://github.com/memolabs-dev/mediterranean-rescue/issues/45) | Parcours authentifié vérifié par navigateur en base fictive, rôles distincts, preuves | 3–5 h | Tech lead / test |
+| D'abord | [#46](https://github.com/memolabs-dev/mediterranean-rescue/issues/46) | Marqueur mobile réellement rendu et cliquable (test WebKit fait), validation sur vrai téléphone encore ouverte | 1–2 h | Front / QA |
+| Ensuite | [#48](https://github.com/memolabs-dev/mediterranean-rescue/issues/48) | Décisions A/B/C, sources, responsables, droits et premier résultat | 2–4 h | Tech lead + PO/SOS |
+| Ensuite | [#57](https://github.com/memolabs-dev/mediterranean-rescue/issues/57) | Exemple d'export CartONG depuis données fictives, mapping + non-régression | 3–5 h | Bénévole données |
+| Ensuite | [#58](https://github.com/memolabs-dev/mediterranean-rescue/issues/58) | Méthode de rapprochement logbook / Sheets avec cas synthétiques | 3–5 h | Bénévole ingestion |
 
 Ne pas attribuer nominativement d'autres bénévoles avant leur accord. Les charges sont **des estimations**, à recalibrer selon disponibilités.
 
@@ -62,7 +62,7 @@ Ne pas attribuer nominativement d'autres bénévoles avant leur accord. Les char
 
 « Notre démonstrateur indépendant est prêt à illustrer la vérification de sources. Nous ne proposons pas d'imposer sa stack. Pouvez-vous confirmer le problème le plus urgent de SOS, le propriétaire de la donnée et si notre premier livrable doit réactualiser le tableur CartONG, préparer un export contrôlé ou remplacer quelque chose ? »
 
-Après réponse : consigner un **ADR-001** dans le dépôt choisi par l'équipe (pas automatiquement dans `dataforgoodfr`), dater la décision, désigner son responsable et n'ouvrir que les tickets validés.
+Après réponse : consigner une **première décision écrite (ADR)** dans le dépôt choisi par l'équipe (pas automatiquement dans `dataforgoodfr`), dater la décision, désigner son responsable et n'ouvrir que les tickets validés.
 
 ## Ce que nous ne prétendons pas avoir fait
 

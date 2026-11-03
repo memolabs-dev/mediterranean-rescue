@@ -19,8 +19,8 @@ Trois niveaux restent séparés (voir 03-modele-et-regles) : la ligne d'un snaps
 Création de brouillons d'événements depuis les identités (tranche suivante), interface de revue (future application React), rapprochement flou automatique, correspondance entre onglets (un transfert et le sauvetage d'origine), alias de ports pour d'autres sources.
 
 ## Critères d'acceptation
-- AC-X1 : snapshot stocké avec provenance et empreintes, rejoué sans doublon, refusé si lecture rejetée ou partielle, sans création d'événement.
-- AC-X2 : premier export, toutes les lignes saines proposées `new` ; approbation avec permission et motif, refus d'une ligne en erreur, d'un double lien, d'une identité vue deux fois dans un snapshot, d'une identité d'une autre source ou d'un autre onglet.
-- AC-X3 : même contenu dans un nouvel export (lignes déplacées) : `exact_carry` vers la même identité, approbation groupée, aucune nouvelle identité. Ligne corrigée : `candidates`, puis `reviewed_match`. Empreinte dupliquée : jamais `exact_carry`.
-- AC-X4 : ports proposés depuis `Data_ports`, port créé avec position et provenance, position explicite exigée pour une ligne ambiguë, lecture unique par libellé, libellés `Port_disembarkation` non résolus listés puis résolus ; libellé à plusieurs ports, navire ou « pas un port » enregistré sans être forcé vers un port ; seul un nom identique à la casse près est suggéré.
-- AC-X5 : API publique, publication et import canonique inchangés ; aucune donnée réelle dans le dépôt.
+- Snapshot stocké avec provenance et empreintes, rejoué sans doublon, refusé si lecture rejetée ou partielle, sans création d'événement.
+- Premier export, toutes les lignes saines proposées `new` ; approbation avec permission et motif, refus d'une ligne en erreur, d'un double lien, d'une identité vue deux fois dans un snapshot, d'une identité d'une autre source ou d'un autre onglet.
+- Même contenu dans un nouvel export (lignes déplacées) : `exact_carry` vers la même identité, approbation groupée, aucune nouvelle identité. Ligne corrigée : `candidates`, puis `reviewed_match`. Empreinte dupliquée : jamais `exact_carry`.
+- Ports proposés depuis `Data_ports`, port créé avec position et provenance, position explicite exigée pour une ligne ambiguë, lecture unique par libellé, libellés `Port_disembarkation` non résolus listés puis résolus ; libellé à plusieurs ports, navire ou « pas un port » enregistré sans être forcé vers un port ; seul un nom identique à la casse près est suggéré.
+- API publique, publication et import canonique inchangés ; aucune donnée réelle dans le dépôt.
